@@ -15,6 +15,8 @@
 @property (assign, nonatomic, readonly) CGFloat verticalInset;
 @property (assign, nonatomic, readonly) CGFloat horizontalInset;
 
+@property (strong, nonatomic) CADisplayLink *displayLink;
+
 @end
 
 @implementation AVOCollectionViewController
@@ -23,6 +25,18 @@ static NSString * const reuseIdentifier = @"CarouselCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayTimerTicked:)];
+
+    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+}
+
+- (void)displayTimerTicked:(CADisplayLink *)displayLink {
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -92,7 +106,56 @@ static NSString * const reuseIdentifier = @"CarouselCell";
         [cell setBackgroundColor:[UIColor blueColor]];
     [cell.textLabel setText:[NSString stringWithFormat:@"%i", (indexPath.item + 1)]];
 
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped)];
+    [cell addGestureRecognizer:tap];
+
     return cell;
+}
+
+- (void)tapped {
+
+    __weak typeof(self) weakSelf = self;
+    [self.collectionView performBatchUpdates:^{
+        __strong typeof(self) strongSelf = weakSelf;
+        if (strongSelf) {
+            NSIndexPath *indexPathFrom;
+            NSIndexPath *indexPathTo;
+            indexPathFrom = [NSIndexPath indexPathForItem:0 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:1 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+
+            indexPathFrom = [NSIndexPath indexPathForItem:1 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:2 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+
+            indexPathFrom = [NSIndexPath indexPathForItem:2 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:5 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+
+            indexPathFrom = [NSIndexPath indexPathForItem:5 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:8 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+
+            indexPathFrom = [NSIndexPath indexPathForItem:8 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:7 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+
+            indexPathFrom = [NSIndexPath indexPathForItem:7 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:6 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+
+            indexPathFrom = [NSIndexPath indexPathForItem:6 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:3 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+
+            indexPathFrom = [NSIndexPath indexPathForItem:3 inSection:0];
+            indexPathTo = [NSIndexPath indexPathForItem:0 inSection:0];
+            [strongSelf.collectionView moveItemAtIndexPath:indexPathFrom toIndexPath:indexPathTo];
+        }
+    } completion:^(BOOL finished) {
+
+    }];
+
 }
 
 #pragma mark <UICollectionViewDelegateFlowLayout>
