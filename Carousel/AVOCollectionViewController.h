@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  AVOCollectionViewController.h
 //  Carousel
 //
 //  Created by Artem Olkov on 20/06/15.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface AVOCollectionViewController : UICollectionViewController <UICollectionViewDelegateFlowLayout>
 
 @end
-
