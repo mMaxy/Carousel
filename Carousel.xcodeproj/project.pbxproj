@@ -15,6 +15,7 @@
 		228B8BA61B35CE3800D0FCD0 /* CarouselTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */; };
 		228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */; };
 		228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */; };
+		22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,8 @@
 		228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewController.m; sourceTree = "<group>"; };
 		228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewCell.h; sourceTree = "<group>"; };
 		228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewCell.m; sourceTree = "<group>"; };
+		22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewLayout.h; sourceTree = "<group>"; };
+		22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewLayout.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +97,8 @@
 				228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */,
 				228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */,
 				228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */,
+				22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */,
+				22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -226,6 +231,7 @@
 			files = (
 				228B8B8F1B35CE3800D0FCD0 /* AppDelegate.m in Sources */,
 				228B8B8C1B35CE3800D0FCD0 /* main.m in Sources */,
+				22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */,
 				228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */,
 				228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */,
 			);
