@@ -30,6 +30,9 @@ static NSString * const reuseIdentifier = @"CarouselCell";
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
+    CGSize size = [self getCellSize];
+
+
     self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayTimerTicked:)];
 
     [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
