@@ -9,11 +9,13 @@
 /* Begin PBXBuildFile section */
 		228B8B8C1B35CE3800D0FCD0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8B8B1B35CE3800D0FCD0 /* main.m */; };
 		228B8B8F1B35CE3800D0FCD0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8B8E1B35CE3800D0FCD0 /* AppDelegate.m */; };
-		228B8B921B35CE3800D0FCD0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8B911B35CE3800D0FCD0 /* ViewController.m */; };
 		228B8B951B35CE3800D0FCD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B931B35CE3800D0FCD0 /* Main.storyboard */; };
 		228B8B971B35CE3800D0FCD0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B961B35CE3800D0FCD0 /* Images.xcassets */; };
 		228B8B9A1B35CE3800D0FCD0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B981B35CE3800D0FCD0 /* LaunchScreen.xib */; };
 		228B8BA61B35CE3800D0FCD0 /* CarouselTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */; };
+		228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */; };
+		228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */; };
+		22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,14 +34,18 @@
 		228B8B8B1B35CE3800D0FCD0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		228B8B8D1B35CE3800D0FCD0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		228B8B8E1B35CE3800D0FCD0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		228B8B901B35CE3800D0FCD0 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		228B8B911B35CE3800D0FCD0 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		228B8B941B35CE3800D0FCD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		228B8B961B35CE3800D0FCD0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		228B8B991B35CE3800D0FCD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		228B8B9F1B35CE3800D0FCD0 /* CarouselTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarouselTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B8BA41B35CE3800D0FCD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CarouselTests.m; sourceTree = "<group>"; };
+		228B8BAF1B35D0D200D0FCD0 /* AVOCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewController.h; sourceTree = "<group>"; };
+		228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewController.m; sourceTree = "<group>"; };
+		228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewCell.h; sourceTree = "<group>"; };
+		228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewCell.m; sourceTree = "<group>"; };
+		22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewLayout.h; sourceTree = "<group>"; };
+		22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewLayout.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,12 +89,16 @@
 			children = (
 				228B8B8D1B35CE3800D0FCD0 /* AppDelegate.h */,
 				228B8B8E1B35CE3800D0FCD0 /* AppDelegate.m */,
-				228B8B901B35CE3800D0FCD0 /* ViewController.h */,
-				228B8B911B35CE3800D0FCD0 /* ViewController.m */,
 				228B8B931B35CE3800D0FCD0 /* Main.storyboard */,
 				228B8B961B35CE3800D0FCD0 /* Images.xcassets */,
 				228B8B981B35CE3800D0FCD0 /* LaunchScreen.xib */,
 				228B8B891B35CE3800D0FCD0 /* Supporting Files */,
+				228B8BAF1B35D0D200D0FCD0 /* AVOCollectionViewController.h */,
+				228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */,
+				228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */,
+				228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */,
+				22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */,
+				22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -219,9 +229,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				228B8B921B35CE3800D0FCD0 /* ViewController.m in Sources */,
 				228B8B8F1B35CE3800D0FCD0 /* AppDelegate.m in Sources */,
 				228B8B8C1B35CE3800D0FCD0 /* main.m in Sources */,
+				22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */,
+				228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */,
+				228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,6 +430,7 @@
 				228B8BAB1B35CE3800D0FCD0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		228B8BAC1B35CE3800D0FCD0 /* Build configuration list for PBXNativeTarget "CarouselTests" */ = {
 			isa = XCConfigurationList;
@@ -426,6 +439,7 @@
 				228B8BAE1B35CE3800D0FCD0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
