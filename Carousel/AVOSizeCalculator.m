@@ -90,7 +90,6 @@
     _rectToFit = rectToFit;
 }
 
-
 #pragma mark PRIVATE METHODS
 
 - (void)actualSetCellSize:(CGSize)size andVerticalInset:(CGFloat)vi andHorizontalInset:(CGFloat)hi {

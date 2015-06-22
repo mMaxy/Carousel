@@ -17,7 +17,9 @@
 		228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */; };
 		22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */; };
 		22FE30461B381E9300AA33A3 /* AVOSizeCalculatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */; };
+		22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30471B3843DA00AA33A3 /* AVOPathTests.m */; };
 		ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */; };
+		ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,9 @@
 		22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewLayout.h; sourceTree = "<group>"; };
 		22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewLayout.m; sourceTree = "<group>"; };
 		22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSizeCalculatorTests.m; sourceTree = "<group>"; };
+		22FE30471B3843DA00AA33A3 /* AVOPathTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOPathTests.m; sourceTree = "<group>"; };
+		ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOPath.h; sourceTree = "<group>"; };
+		ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOPath.m; sourceTree = "<group>"; };
 		ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSizeCalculator.m; sourceTree = "<group>"; };
 		ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOSizeCalculator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -106,6 +111,8 @@
 				22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */,
 				ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */,
 				ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */,
+				ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */,
+				ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -125,6 +132,7 @@
 				228B8BA31B35CE3800D0FCD0 /* Supporting Files */,
 				228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */,
 				22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */,
+				22FE30471B3843DA00AA33A3 /* AVOPathTests.m */,
 			);
 			path = CarouselTests;
 			sourceTree = "<group>";
@@ -243,6 +251,7 @@
 				228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */,
 				228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */,
 				ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */,
+				ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,6 +261,7 @@
 			files = (
 				228B8BA61B35CE3800D0FCD0 /* CarouselTests.m in Sources */,
 				22FE30461B381E9300AA33A3 /* AVOSizeCalculatorTests.m in Sources */,
+				22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
