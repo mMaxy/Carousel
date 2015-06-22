@@ -8,8 +8,6 @@
 
 @interface AVOPath ()
 
-@property (strong, nonatomic) NSArray * centers;
-
 @end
 
 @implementation AVOPath

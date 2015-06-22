@@ -9,8 +9,11 @@
 @interface AVOSizeCalculator : NSObject
 
 @property (assign, nonatomic) CGRect rectToFit;
+
 @property (assign, nonatomic, readonly) CGSize cellSize;
 @property (assign, nonatomic, readonly) CGSize frameSize;
+
+@property (assign, nonatomic) CGFloat spaceBetweenCells;
 @property (assign, nonatomic, readonly) CGFloat verticalInset;
 @property (assign, nonatomic, readonly) CGFloat horizontalInset;
 
