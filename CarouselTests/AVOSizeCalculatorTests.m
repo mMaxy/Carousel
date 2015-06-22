@@ -44,6 +44,25 @@
     XCTAssertEqual(self.calc.verticalInset, 0.f);
 }
 
+
+- (void)test380x500 {
+    // given
+    CGRect screen = CGRectMake(0.f, 0.f, 380.f, 500.f);
+
+    // when
+    [self.calc setRectToFit:screen];
+
+    // then
+    XCTAssertEqual(self.calc.cellSize.height, 160.f);
+    XCTAssertEqual(self.calc.cellSize.width, 120.f);
+
+    XCTAssertEqual(self.calc.frameSize.height, 490.f);
+    XCTAssertEqual(self.calc.frameSize.width, 370.f);
+
+    XCTAssertEqual(self.calc.horizontalInset, 5.f);
+    XCTAssertEqual(self.calc.verticalInset, 5.f);
+}
+
 - (void)testIP4ScreenPortrait {
     // given
     CGRect screen = CGRectMake(0.f, 0.f, 320.f, 480.f);
