@@ -56,8 +56,8 @@
     XCTAssertEqual(self.calc.cellSize.width, 120.f);
     XCTAssertEqual(self.calc.cellSize.height, 160.f);
 
-    XCTAssertEqual(self.calc.frameSize.width, 370.f);
-    XCTAssertEqual(self.calc.frameSize.height, 490.f);
+    XCTAssertEqual(self.calc.frameSize.width, 380.f);
+    XCTAssertEqual(self.calc.frameSize.height, 500.f);
 
     XCTAssertEqual(self.calc.horizontalInset, 5.f);
     XCTAssertEqual(self.calc.verticalInset, 5.f);
@@ -74,8 +74,8 @@
     XCTAssertEqual(self.calc.cellSize.width, 100.f);
     XCTAssertEqual(self.calc.cellSize.height, 133.333328f);
 
-    XCTAssertEqual(self.calc.frameSize.width, 310.f);
-    XCTAssertEqual(self.calc.frameSize.height, 410.f);
+    XCTAssertEqual(self.calc.frameSize.width, 320.f);
+    XCTAssertEqual(self.calc.frameSize.height, 420.f);
 
     XCTAssertEqual(self.calc.horizontalInset, 5.f);
     XCTAssertEqual(self.calc.verticalInset, 35.f);
@@ -92,8 +92,8 @@
     XCTAssertEqual(self.calc.cellSize.width, 75.f);
     XCTAssertEqual(self.calc.cellSize.height, 100.f);
 
-    XCTAssertEqual(self.calc.frameSize.width, 235.f);
-    XCTAssertEqual(self.calc.frameSize.height, 310.f);
+    XCTAssertEqual(self.calc.frameSize.width, 245.f);
+    XCTAssertEqual(self.calc.frameSize.height, 320.f);
 
     XCTAssertEqual(self.calc.horizontalInset, 122.5f);
     XCTAssertEqual(self.calc.verticalInset, 5.f);

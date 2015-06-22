@@ -98,8 +98,8 @@
     _verticalInset = vi;
     _horizontalInset =  hi;
 
-    CGFloat spaceBetween = (_verticalInset > _horizontalInset) ? _horizontalInset : _verticalInset;
-    _frameSize = CGSizeMake(( _cellSize.width * 3.f + 2 * spaceBetween), (_cellSize.height * 3.f + 2 * spaceBetween));
+    CGFloat spaceBetweenCells = (_verticalInset > _horizontalInset) ? _horizontalInset : _verticalInset;
+    _frameSize = CGSizeMake(( _cellSize.width * 3.f + 4 * spaceBetweenCells), (_cellSize.height * 3.f + 4 * spaceBetweenCells));
 }
 
 @end
