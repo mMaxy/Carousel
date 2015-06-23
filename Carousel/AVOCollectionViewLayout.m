@@ -7,6 +7,15 @@
 //
 
 #import "AVOCollectionViewLayout.h"
+#import "AVOSizeCalculator.h"
+#import "AVOPath.h"
+
+@interface AVOCollectionViewLayout ()
+
+@property (strong, nonatomic) AVOSizeCalculator *sizeCalculator;
+@property (strong, nonatomic) AVOPath *path;
+
+@end
 
 @implementation AVOCollectionViewLayout
 
