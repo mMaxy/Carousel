@@ -47,4 +47,17 @@
     return result;
 }
 
+- (NSIndexPath *)getCellIndexWithPoint:(CGPoint)point {
+    return nil;
+}
+
+- (NSIndexPath *)getNearestCellIndexFromPoint:(CGPoint)point withResultDirection:(CGPoint *)direction andResultDistance:(CGFloat *)distance {
+    return nil;
+}
+
+- (NSArray *)getIndexesInRect:(CGRect)rect {
+    return nil;
+}
+
+
 @end

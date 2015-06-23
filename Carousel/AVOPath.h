@@ -14,4 +14,12 @@
 
 - (CGPoint)getCenterForIndex:(NSUInteger) i;
 
+- (NSIndexPath *)getCellIndexWithPoint:(CGPoint) point;
+
+- (NSIndexPath *)getNearestCellIndexFromPoint:(CGPoint) point
+                          withResultDirection:(CGPoint *) direction
+                            andResultDistance:(CGFloat *) distance;
+
+- (NSArray *)getIndexesInRect:(CGRect) rect;
+
 @end
