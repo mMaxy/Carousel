@@ -202,6 +202,37 @@
     }
 }
 
+- (void)testCellForPoint_empty {
+    //check for every cell
+    NSMutableArray *indexes = [NSMutableArray new];
+    for (int i = 0; i < 9; i++) {
+        [indexes addObject:[NSIndexPath indexPathForItem:i inSection:0]];
+    }
+
+    for (NSIndexPath *ip in indexes) {
+        //given
+        CGPoint center = [self.path getCenterForIndex:(NSUInteger) ip.item];
+        CGSize size = self.calc.cellSize;
+        CGPoint pointTopLeft  = CGPointMake(center.x - size.width / 2 - 1.f, center.y - size.height / 2 - 1.f);
+        CGPoint pointTopRight = CGPointMake(center.x + size.width / 2 + 1.f, center.y - size.height / 2 - 1.f);
+        CGPoint pointBotLeft  = CGPointMake(center.x - size.width / 2 - 1.f, center.y + size.height / 2 + 1.f);
+        CGPoint pointBotRight = CGPointMake(center.x + size.width / 2 + 1.f, center.y + size.height / 2 + 1.f);
+
+        //when
+        NSIndexPath *resTopLeft  = [self.path getCellIndexWithPoint:pointTopLeft];
+        NSIndexPath *resTopRight = [self.path getCellIndexWithPoint:pointTopRight];
+        NSIndexPath *resBotLeft  = [self.path getCellIndexWithPoint:pointBotLeft];
+        NSIndexPath *resBotRight = [self.path getCellIndexWithPoint:pointBotRight];
+
+        //then
+        XCTAssertTrue(resTopLeft  == nil);
+        XCTAssertTrue(resTopRight == nil);
+        XCTAssertTrue(resBotLeft  == nil);
+        XCTAssertTrue(resBotRight == nil);
+
+    }
+}
+
 #pragma mark Nearest Cell Index
 
 - (void)testNearestCellIndex_outsideCell_left {
