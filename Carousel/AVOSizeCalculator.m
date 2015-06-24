@@ -15,7 +15,7 @@
 @synthesize cellSize = _cellSize;
 @synthesize rectToFit = _rectToFit;
 
-#pragma mark INITIALIZERS
+#pragma mark Inits
 
 - (instancetype) init {
     return [self initWithRectToFit:CGRectZero];
@@ -29,7 +29,7 @@
     return self;
 }
 
-#pragma mark GETTERS AND SETTER
+#pragma mark Getters and Setter
 
 - (CGSize)cellSize {
     return _cellSize;
@@ -40,11 +40,15 @@
 }
 
 - (void)setRectToFit:(CGRect)rectToFit {
-    _rectToFit = rectToFit;
-    [self countCellSizeAndInsets];
+    BOOL heightDifferent = _rectToFit.size.height != rectToFit.size.height;
+    BOOL widthDifferent = _rectToFit.size.width != rectToFit.size.width;
+    if (heightDifferent || widthDifferent) {
+        _rectToFit = rectToFit;
+        [self countCellSizeAndInsets];
+    }
 }
 
-#pragma mark PRIVATE METHODS
+#pragma mark Private Methods
 
 - (void)actualSetCellSize:(CGSize)size andVerticalInset:(CGFloat)vi andHorizontalInset:(CGFloat)hi {
     _cellSize = size;

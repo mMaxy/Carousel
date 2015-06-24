@@ -187,6 +187,8 @@
     return nil;
 }
 
+#pragma mark Private methods
+
 - (NSArray *)possibleOutcomes {
     if (!_possibleOutcomes) {
         _possibleOutcomes = @[
