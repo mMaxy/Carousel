@@ -7,8 +7,25 @@
 //
 
 #import "AVOCollectionViewLayout.h"
+#import "AVOSizeCalculator.h"
+#import "AVOPath.h"
+
+@interface AVOCollectionViewLayout ()
+
+@property (strong, nonatomic) AVOSizeCalculator *sizeCalculator;
+@property (strong, nonatomic) AVOPath *path;
+
+@end
 
 @implementation AVOCollectionViewLayout
+
+- (void)setCalcAndPath {
+    self.sizeCalculator = [[AVOSizeCalculator alloc] init];
+    self.path = [[AVOPath alloc] init];
+
+    [self.sizeCalculator setRectToFit:self.collectionView.frame];
+    [self.path setSizeCalculator:self.sizeCalculator];
+}
 
 #pragma mark - UICollectionViewLayout Implementation
 
@@ -39,7 +56,7 @@
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
 
-    CGRect frame = [self frameForCardAtIndex:indexPath.item];
+    CGRect frame = [self frameForCardAtIndex:(NSUInteger) indexPath.item];
     attributes.frame = frame;
 
     return attributes;
@@ -49,22 +66,56 @@
     return YES;
 }
 
+
 #pragma mark - Helpers
 
 - (NSArray *)indexPathsOfItemsInRect:(CGRect)rect {
     NSArray *indexPaths;
 
-    //TODO
+    indexPaths = [self.path getIndexesInRect:rect];
 
     return indexPaths;
 }
 
-- (CGRect)frameForCardAtIndex:(NSInteger) index {
+- (CGRect)frameForCardAtIndex:(NSUInteger) index {
     CGRect frame = CGRectZero;
 
-    //TODO
+    frame.size = [self.sizeCalculator cellSize];
+    CGPoint center = [self.path getCenterForIndex:index];
+    frame.origin = CGPointMake(center.x - frame.size.width/2, center.y - frame.size.height/2);
 
     return frame;
 }
+
+- (CGFloat)getInsetRight {
+    return self.sizeCalculator.horizontalInset;
+}
+
+- (CGFloat)getInsetTop {
+    return self.sizeCalculator.verticalInset;
+}
+
+- (CGFloat)getInsetLeft {
+    return self.sizeCalculator.horizontalInset;
+}
+
+- (CGFloat)getInsetBot {
+    return self.sizeCalculator.verticalInset;
+}
+
+- (AVOPath *)path {
+    if (!_path || !_sizeCalculator) {
+        [self setCalcAndPath];
+    }
+    return _path;
+}
+
+- (AVOSizeCalculator *)sizeCalculator {
+    if (!_path || !_sizeCalculator) {
+        [self setCalcAndPath];
+    }
+    return _sizeCalculator;
+}
+
 
 @end
