@@ -41,49 +41,56 @@
 #pragma mark Center For Index
 
 - (void)testPlaceForTopLeft {
-    CGPoint point = [self.path getCenterForIndex:1];
+    CGPoint point = [self.path getCenterForIndex:0];
 
     XCTAssertEqual(point.x, 65.f);
     XCTAssertEqual(point.y, 85.f);
 }
 
 - (void)testPlaceForTopCenter {
-    CGPoint point = [self.path getCenterForIndex:2];
+    CGPoint point = [self.path getCenterForIndex:1];
 
     XCTAssertEqual(point.x, 190.f);
     XCTAssertEqual(point.y, 85.f);
 }
 
 - (void)testPlaceForTopRight {
-    CGPoint point = [self.path getCenterForIndex:3];
+    CGPoint point = [self.path getCenterForIndex:2];
 
     XCTAssertEqual(point.x, 315.f);
     XCTAssertEqual(point.y, 85.f);
 }
 
 - (void)testPlaceForCenterLeft {
-    CGPoint point = [self.path getCenterForIndex:8];
+    CGPoint point = [self.path getCenterForIndex:7];
 
     XCTAssertEqual(point.x, 65.f);
     XCTAssertEqual(point.y, 250.f);
 }
 
+- (void)testPlaceForCenterCenter {
+    CGPoint point = [self.path getCenterForIndex:8];
+
+    XCTAssertEqual(point.x, 190.f);
+    XCTAssertEqual(point.y, 250.f);
+}
+
 - (void)testPlaceForCenterRight {
-    CGPoint point = [self.path getCenterForIndex:4];
+    CGPoint point = [self.path getCenterForIndex:3];
 
     XCTAssertEqual(point.x, 315.f);
     XCTAssertEqual(point.y, 250.f);
 }
 
 - (void)testPlaceForBotLeft {
-    CGPoint point = [self.path getCenterForIndex:7];
+    CGPoint point = [self.path getCenterForIndex:6];
 
     XCTAssertEqual(point.x, 65.f);
     XCTAssertEqual(point.y, 415.f);
 }
 
 - (void)testPlaceForBotCenter {
-    CGPoint point = [self.path getCenterForIndex:6];
+    CGPoint point = [self.path getCenterForIndex:5];
 
     XCTAssertEqual(point.x, 190.f);
     XCTAssertEqual(point.y, 415.f);
@@ -91,7 +98,7 @@
 
 - (void)testPlaceForBotRight {
 
-    CGPoint point = [self.path getCenterForIndex:5];
+    CGPoint point = [self.path getCenterForIndex:4];
 
     XCTAssertEqual(point.x, 315.f);
     XCTAssertEqual(point.y, 415.f);

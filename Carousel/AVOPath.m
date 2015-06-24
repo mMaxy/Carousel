@@ -28,19 +28,19 @@
     CGFloat x = 0.f;
     CGFloat y = 0.f;
 
-    if ([@[@(1), @(7), @(8)] containsObject:@(i)]){
+    if ([@[@(0), @(6), @(7)] containsObject:@(i)]){
         x = leftColumn;
-    } else if ([@[@(2), @(6), @(0)] containsObject:@(i)]) {
+    } else if ([@[@(1), @(5), @(8)] containsObject:@(i)]) {
         x = centerColumn;
-    } else if ([@[@(3), @(4), @(5)] containsObject:@(i)]) {
+    } else if ([@[@(2), @(3), @(4)] containsObject:@(i)]) {
         x = rightColumn;
     }
 
-    if ([@[@(1), @(2), @(3)] containsObject:@(i)]) {
+    if ([@[@(0), @(1), @(2)] containsObject:@(i)]) {
         y = topRow;
-    } else if ([@[@(8), @(9), @(4)] containsObject:@(i)]) {
+    } else if ([@[@(7), @(8), @(3)] containsObject:@(i)]) {
         y = centerRow;
-    } else if ([@[@(7), @(6), @(5)] containsObject:@(i)]) {
+    } else if ([@[@(6), @(5), @(4)] containsObject:@(i)]) {
         y = botRow;
     }
 
@@ -60,11 +60,11 @@
     CGFloat xRightCellRightBorder = xRightCellLeftBorder + self.sizeCalculator.cellSize.width;
 
     CGFloat yTopCellTopBorder = self.sizeCalculator.horizontalInset;
-    CGFloat yTopCellBotBorder = yTopCellTopBorder + self.sizeCalculator.cellSize.width;
+    CGFloat yTopCellBotBorder = yTopCellTopBorder + self.sizeCalculator.cellSize.height;
     CGFloat yCenterCellTopBorder = yTopCellBotBorder + self.sizeCalculator.spaceBetweenCells;
-    CGFloat yCenterCellBotBorder = yCenterCellTopBorder + self.sizeCalculator.cellSize.width;
+    CGFloat yCenterCellBotBorder = yCenterCellTopBorder + self.sizeCalculator.cellSize.height;
     CGFloat yBotCellTopBorder = yCenterCellBotBorder + self.sizeCalculator.spaceBetweenCells;
-    CGFloat yBotCellBotBorder = yBotCellTopBorder + self.sizeCalculator.cellSize.width;
+    CGFloat yBotCellBotBorder = yBotCellTopBorder + self.sizeCalculator.cellSize.height;
 
     BOOL pointInLeftColumn = point.x >= xLeftCellLeftBorder && point.x <= xLeftCellRightBorder;
     BOOL pointInCenterColumn = point.x >= xCenterCellLeftBorder && point.x <= xCenterCellRightBorder;
