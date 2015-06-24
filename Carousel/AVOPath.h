@@ -12,7 +12,8 @@
 
 @property (weak, nonatomic) AVOSizeCalculator *sizeCalculator;
 
-- (CGPoint)getCenterForIndex:(NSUInteger) i;
+- (CGPoint)getCenterForIndex:(NSUInteger) index;
+- (CGPoint)getCenterForIndexPath:(NSIndexPath *) indexPath;
 
 - (NSIndexPath *)getCellIndexWithPoint:(CGPoint) point;
 
