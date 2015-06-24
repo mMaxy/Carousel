@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E33b" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="if8-ml-JfR">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="if8-ml-JfR">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
@@ -10,8 +10,8 @@
         <scene sceneID="Vus-ae-NcT">
             <objects>
                 <collectionViewController id="if8-ml-JfR" customClass="AVOCollectionViewController" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="JO1-Zc-lZS">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" dataMode="prototypes" id="JO1-Zc-lZS">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="0.0" id="NKb-iv-68i" customClass="AVOCollectionViewLayout">
                             <size key="itemSize" width="100" height="170"/>
@@ -27,7 +27,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="100" height="170"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Idk-ws-zdM">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="1" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Idk-ws-zdM">
                                             <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -43,28 +43,6 @@
                                     <constraint firstItem="Idk-ws-zdM" firstAttribute="trailing" secondItem="ecA-Oz-qin" secondAttribute="trailingMargin" id="FxH-Pe-MlN"/>
                                     <constraint firstItem="Idk-ws-zdM" firstAttribute="leading" secondItem="ecA-Oz-qin" secondAttribute="leadingMargin" id="wIK-uO-2I0"/>
                                 </constraints>
-                                <variation key="default">
-                                    <mask key="subviews">
-                                        <exclude reference="Idk-ws-zdM"/>
-                                    </mask>
-                                    <mask key="constraints">
-                                        <exclude reference="0gK-IN-5JR"/>
-                                        <exclude reference="C9w-VM-O5E"/>
-                                        <exclude reference="FxH-Pe-MlN"/>
-                                        <exclude reference="wIK-uO-2I0"/>
-                                    </mask>
-                                </variation>
-                                <variation key="heightClass=regular-widthClass=compact">
-                                    <mask key="subviews">
-                                        <include reference="Idk-ws-zdM"/>
-                                    </mask>
-                                    <mask key="constraints">
-                                        <include reference="0gK-IN-5JR"/>
-                                        <include reference="C9w-VM-O5E"/>
-                                        <include reference="FxH-Pe-MlN"/>
-                                        <include reference="wIK-uO-2I0"/>
-                                    </mask>
-                                </variation>
                                 <connections>
                                     <outlet property="textLabel" destination="Idk-ws-zdM" id="RIb-O8-Gso"/>
                                 </connections>
@@ -78,7 +56,12 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fVx-T5-U2X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="348" y="234"/>
+            <point key="canvasLocation" x="185.59999999999999" y="221.52000000000001"/>
         </scene>
     </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
 </document>
