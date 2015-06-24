@@ -20,23 +20,6 @@
 
 static NSString * const reuseIdentifier = @"CarouselCell";
 
-- (id)init {
-    self = [super init];
-    if (self) {
-//        [self setDefaults];
-//        [self addObserver:self forKeyPath:kLXCollectionViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-//        [self setDefaults];
-//        [self addObserver:self forKeyPath:kLXCollectionViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    }
-    return self;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -48,6 +31,12 @@ static NSString * const reuseIdentifier = @"CarouselCell";
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    AVOCollectionViewLayout *layout = (AVOCollectionViewLayout *) self.collectionView.collectionViewLayout;
+    [layout invalidateLayout];
+    [self.collectionView performBatchUpdates:nil completion:nil];
 }
 
 #pragma mark <UICollectionViewDataSource>

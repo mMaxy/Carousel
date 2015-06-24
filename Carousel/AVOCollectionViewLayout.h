@@ -10,11 +10,4 @@
 
 @interface AVOCollectionViewLayout : UICollectionViewLayout
 
-- (CGFloat)getInsetRight;
-
-- (CGFloat)getInsetTop;
-
-- (CGFloat)getInsetLeft;
-
-- (CGFloat)getInsetBot;
 @end

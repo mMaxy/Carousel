@@ -66,6 +66,11 @@
     return YES;
 }
 
+- (void)invalidateLayout {
+    [self setPath:nil];
+    [self setSizeCalculator:nil];
+    [super invalidateLayout];
+}
 
 #pragma mark - Helpers
 
@@ -85,22 +90,6 @@
     frame.origin = CGPointMake(center.x - frame.size.width/2, center.y - frame.size.height/2);
 
     return frame;
-}
-
-- (CGFloat)getInsetRight {
-    return self.sizeCalculator.horizontalInset;
-}
-
-- (CGFloat)getInsetTop {
-    return self.sizeCalculator.verticalInset;
-}
-
-- (CGFloat)getInsetLeft {
-    return self.sizeCalculator.horizontalInset;
-}
-
-- (CGFloat)getInsetBot {
-    return self.sizeCalculator.verticalInset;
 }
 
 - (AVOPath *)path {
