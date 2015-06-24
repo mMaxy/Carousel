@@ -105,43 +105,42 @@
         matrix[index] = [matrix[index] mutableCopy];
     }
 
-    //remove all index that impossible by starting X coordinate
-    NSArray *tmp = @[@(frames.xLeftCellRightBorder), @(frames.xCenterCellRightBorder), @(frames.xRightCellRightBorder)];
-    for (NSUInteger column = 0; column < [matrix count]; column++) {
-        if (fromX >= [tmp[column] floatValue]) {
-            matrix[0] [column] = [NSNull null];
-            matrix[1] [column] = [NSNull null];
-            matrix[2] [column] = [NSNull null];
-        }
-    }
+    NSArray *topBorders = @[
+            @(frames.yTopCellTopBorder),
+            @(frames.yCenterCellTopBorder),
+            @(frames.yBotCellTopBorder)
+    ];
+    NSArray *botBorders = @[
+            @(frames.yTopCellBotBorder),
+            @(frames.yCenterCellBotBorder),
+            @(frames.yBotCellBotBorder)
+    ];
 
-    //remove all index that impossible by starting Y coordinate
-    tmp = @[@(frames.yTopCellBotBorder), @(frames.yCenterCellBotBorder), @(frames.yBotCellBotBorder)];
-    for (NSUInteger row = 0; row < [matrix[0] count]; row++) {
-        if (fromY >= [tmp[row] floatValue]) {
-            matrix[row] [0] = [NSNull null];
-            matrix[row] [1] = [NSNull null];
-            matrix[row] [2] = [NSNull null];
-        }
-    }
+    NSArray *leftBorders = @[
+            @(frames.xLeftCellLeftBorder),
+            @(frames.xCenterCellLeftBorder),
+            @(frames.xRightCellLeftBorder)
+    ];
+    NSArray *rightBorders = @[
+            @(frames.xLeftCellRightBorder),
+            @(frames.xCenterCellRightBorder),
+            @(frames.xRightCellRightBorder)
+    ];
 
-    //remove all index that impossible by ending X coordinate
-    tmp = @[@(frames.xLeftCellLeftBorder), @(frames.xCenterCellLeftBorder), @(frames.xRightCellLeftBorder)];
-    for (NSUInteger column = 0; column < [matrix count]; column++) {
-        if (toX <= [tmp[column] floatValue]) {
-            matrix[0] [column] = [NSNull null];
-            matrix[1] [column] = [NSNull null];
-            matrix[2] [column] = [NSNull null];
-        }
-    }
+    for (NSUInteger row = 0; row < [matrix count]; row ++) {
+        for (NSUInteger column = 0; column < [matrix[row] count]; column ++) {
 
-    //remove all index that impossible by ending Y coordinate
-    tmp = @[@(frames.yTopCellTopBorder), @(frames.yCenterCellTopBorder), @(frames.yBotCellTopBorder)];
-    for (NSUInteger row = 0; row < [matrix[0] count]; row++) {
-        if (toY <= [tmp[row] floatValue]) {
-            matrix[row] [0] = [NSNull null];
-            matrix[row] [1] = [NSNull null];
-            matrix[row] [2] = [NSNull null];
+            BOOL rectStartsOnRightFromRightBorder = fromX >= [rightBorders[column] floatValue];
+            BOOL rectStartsUnderBotBorder = fromY >= [botBorders[row] floatValue];
+            BOOL rectEndsOnLeftFromLeftBorder = toX <= [leftBorders[column] floatValue];
+            BOOL rectEndsUpperTopBorder = toY <= [topBorders[row] floatValue];
+
+            BOOL rectStartsRighterOrUnderThanCell = rectStartsOnRightFromRightBorder || rectStartsUnderBotBorder;
+            BOOL rectEndsLefterOrUpperThanCell = rectEndsOnLeftFromLeftBorder || rectEndsUpperTopBorder;
+
+            if (rectStartsRighterOrUnderThanCell || rectEndsLefterOrUpperThanCell) {
+                matrix[row][column] = [NSNull null];
+            }
         }
     }
 
