@@ -55,4 +55,19 @@ static NSString * const reuseIdentifier = @"CarouselCell";
     return cell;
 }
 
+
+#pragma mark - <AVOCollectionViewDelegateLayout>
+
+- (void)collectionView:(UICollectionView *)collectionView tapOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"Tap #%i", indexPath.item);
+}
+
+- (void)collectionView:(UICollectionView *)collectionView longpressOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"Longpress start #%i", indexPath.item);
+}
+
+- (void)collectionView:(UICollectionView *)collectionView liftOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"End Longpress #%i", indexPath.item);
+}
+
 @end
