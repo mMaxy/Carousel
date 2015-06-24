@@ -110,61 +110,82 @@
     CGFloat remain = self.cellsOffset;
 
     while (remain > 0.f) {
-        if (self.clockwise) {
-            newX += remain;
-            remain = 0.f;
-            if (newX > self.railXMax) {
-                remain += newX - self.railXMax;
-                newX = self.railXMax;
-            }
-            newY += remain;
-            remain = 0.f;
-            if (newY > self.railYMax) {
-                remain += newY - self.railYMax;
-                newY = self.railYMax;
-            }
-            newX -= remain;
-            remain = 0.f;
-            if (newX < self.railXMin) {
-                remain += self.railXMin - newX;
-                newX = self.railXMin;
-            }
-            newY -= remain;
-            remain = 0.f;
-            if (newY < self.railYMin) {
-                remain += self.railYMin - newY;
-                newY = self.railYMin;
-            }
-        } else {
-            newX -= remain;
-            remain = 0.f;
-            if (newX < self.railXMin) {
-                remain += self.railXMin - newX;
-                newX = self.railXMin;
-            }
-            newY += remain;
-            remain = 0.f;
-            if (newY > self.railYMax) {
-                remain += newY - self.railYMax;
-                newY = self.railYMax;
-            }
-            newX += remain;
-            remain = 0.f;
-            if (newX > self.railXMax) {
-                remain += newX - self.railXMax;
-                newX = self.railXMax;
-            }
-            newY -= remain;
-            remain = 0.f;
-            if (newY < self.railYMin) {
-                remain += self.railYMin - newY;
-                newY = self.railYMin;
-            }
+        CGPoint direction = [self getPossibleDirectionFromPoint:CGPointMake(newX, newY)];
+        newX += direction.x * remain;
+        newY += direction.y * remain;
+        remain = 0;
+        if (newX > self.railXMax) {
+            remain = newX - self.railXMax;
+            newX = self.railXMax;
         }
+        if (newX < self.railXMin) {
+            remain = self.railXMin - newX;
+            newX = self.railXMin;
+        }
+        if (newY > self.railYMax) {
+            remain = newY - self.railYMax;
+            newY = self.railYMax;
+        }
+        if (newY < self.railYMin) {
+            remain = self.railYMin - newY;
+            newY = self.railYMin;
+        }
+
     }
 
     (*center).x = newX;
     (*center).y = newY;
+}
+
+- (CGPoint)getPossibleDirectionFromPoint:(CGPoint)point {
+    CGFloat x;
+    CGFloat y;
+
+    BOOL leftTopCorner  = point.x == self.railXMin && point.y == self.railYMin;
+    BOOL rightTopCorner = point.x == self.railXMax && point.y == self.railYMin;
+    BOOL leftBotCorner  = point.x == self.railXMin && point.y == self.railYMax;
+    BOOL rightBotCorner = point.x == self.railXMax && point.y == self.railYMax;
+
+    if (leftTopCorner) {
+        if (self.clockwise)
+            return CGPointMake(1.f, 0.f);
+        else
+            return CGPointMake(0.f, 1.f);
+    }
+    if (rightTopCorner) {
+        if (self.clockwise)
+            return CGPointMake(0.f, 1.f);
+        else
+            return CGPointMake(-1.f, 0.f);
+    }
+    if (leftBotCorner) {
+        if (self.clockwise)
+            return CGPointMake(0.f, -1.f);
+        else
+            return CGPointMake(1.f, 0.f);
+    }
+    if (rightBotCorner) {
+        if (self.clockwise)
+            return CGPointMake(-1.f, 0.f);
+        else
+            return CGPointMake(0.f, -1.f);
+    }
+
+    if (point.x == self.railXMin) {
+        return CGPointMake(0.f, _clockwise ? -1.f : 1.f);
+    }
+    if (point.x == self.railXMax) {
+        return CGPointMake(0.f, _clockwise ? 1.f : -1.f);
+    }
+
+    if (point.y == self.railYMin) {
+        return CGPointMake(_clockwise ? 1.f : -1.f, 0.f);
+    }
+    if (point.y == self.railYMax) {
+        return CGPointMake(_clockwise ? -1.f : 1.f, 0.f);
+    }
+
+    return CGPointZero;
 }
 
 - (void)invalidatesScrollTimer {
