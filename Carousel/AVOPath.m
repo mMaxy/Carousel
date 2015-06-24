@@ -63,7 +63,7 @@
 - (CGPoint)getCenterForIndexPath:(NSIndexPath *)indexPath {
     CGPoint result;
 
-    result = [self getCenterForIndex:indexPath.item];
+    result = [self getCenterForIndex:(NSUInteger) indexPath.item];
 
     return result;
 }
@@ -92,7 +92,81 @@
 }
 
 - (NSArray *)getIndexesInRect:(CGRect)rect {
-    return nil;
+    CGFloat fromX = rect.origin.x;
+    CGFloat toX = fromX + rect.size.width;
+    CGFloat fromY = rect.origin.y;
+    CGFloat toY = fromY + rect.size.height;
+    NSMutableArray *matrix;
+    NSMutableArray *res = [NSMutableArray new];
+
+    struct Grid frames = self.sizeCalculator.cellFrames;
+    matrix = [[self possibleOutcomes] mutableCopy];
+    for (NSUInteger index = 0; index < [matrix count]; index ++) {
+        matrix[index] = [matrix[index] mutableCopy];
+    }
+
+    //remove all index that impossible by starting X coordinate
+    NSArray *tmp = @[@(frames.xLeftCellRightBorder), @(frames.xCenterCellRightBorder), @(frames.xRightCellRightBorder)];
+    for (NSUInteger column = 0; column < [matrix count]; column++) {
+        if (fromX >= [tmp[column] floatValue]) {
+            matrix[0] [column] = [NSNull null];
+            matrix[1] [column] = [NSNull null];
+            matrix[2] [column] = [NSNull null];
+        }
+    }
+
+    //remove all index that impossible by starting Y coordinate
+    tmp = @[@(frames.yTopCellBotBorder), @(frames.yCenterCellBotBorder), @(frames.yBotCellBotBorder)];
+    for (NSUInteger row = 0; row < [matrix[0] count]; row++) {
+        if (fromY >= [tmp[row] floatValue]) {
+            matrix[row] [0] = [NSNull null];
+            matrix[row] [1] = [NSNull null];
+            matrix[row] [2] = [NSNull null];
+        }
+    }
+
+    //remove all index that impossible by ending X coordinate
+    if (toX <= frames.xRightCellLeftBorder) {
+        matrix[0] [2] = [NSNull null];
+        matrix[1] [2] = [NSNull null];
+        matrix[2] [2] = [NSNull null];
+    }
+    if (toX <= frames.xCenterCellLeftBorder) {
+        matrix[0] [1] = [NSNull null];
+        matrix[1] [1] = [NSNull null];
+        matrix[2] [1] = [NSNull null];
+    }
+    if (toX <= frames.xLeftCellLeftBorder) {
+        matrix[0] [0] = [NSNull null];
+        matrix[1] [0] = [NSNull null];
+        matrix[2] [0] = [NSNull null];
+    }
+    //remove all index that impossible by ending Y coordinate
+    if (toY <= frames.yBotCellTopBorder) {
+        matrix[2] [0] = [NSNull null];
+        matrix[2] [1] = [NSNull null];
+        matrix[2] [2] = [NSNull null];
+    }
+    if (toY <= frames.yCenterCellTopBorder) {
+        matrix[1] [0] = [NSNull null];
+        matrix[1] [1] = [NSNull null];
+        matrix[1] [2] = [NSNull null];
+    }
+    if (toY <= frames.yTopCellTopBorder) {
+        matrix[0] [0] = [NSNull null];
+        matrix[0] [1] = [NSNull null];
+        matrix[0] [2] = [NSNull null];
+    }
+
+    for (NSUInteger i = 0; i < [matrix count]; i++) {
+        for (NSUInteger y = 0; y < [matrix[i] count]; y++) {
+            if (matrix[i][y] != [NSNull null]) {
+                [res addObject:matrix[i][y]];
+            }
+        }
+    }
+
+    return [res copy];
 }
 
 #pragma mark Private methods

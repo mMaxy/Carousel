@@ -505,7 +505,7 @@
 
         //when
         res = [self.path getIndexesInRect:rect];
-        NSIndexPath *expected1 = [NSIndexPath indexPathForItem:0 inSection:0];
+        NSIndexPath *expected1 = ip;
 
         // then
         XCTAssertTrue([res count] == 1);
@@ -516,8 +516,8 @@
 - (void)testIndexesInRect_emptyAroundCell_rows {
     //check for every cell
     NSMutableArray *pointsStart = [NSMutableArray new];
-    for (int i = 0; i < self.calc.frameSize.height; i += self.calc.cellSize.height + self.calc.spaceBetweenCells) {
-        for (int y = 0; y < self.calc.frameSize.width ; y += (self.calc.cellSize.width  - self.calc.spaceBetweenCells)/2) {
+    for (int i = 0; i < self.calc.frameSize.width; i += (self.calc.cellSize.width - self.calc.spaceBetweenCells)/2) {
+        for (int y = 0; y < self.calc.frameSize.height ; y += self.calc.cellSize.height + self.calc.spaceBetweenCells) {
             [pointsStart addObject:[NSValue valueWithCGPoint:CGPointMake(i, y)]];
         }
     }
@@ -638,15 +638,15 @@
 
 - (void)testIndexesInRect_cornersInsideLeftBot {
     //given
-    CGRect rect = CGRectMake(100.f, 390.f, 60.f, 60.f);
+    CGRect rect = CGRectMake(100.f, 300.f, 60.f, 60.f);
     NSArray *indexes;
 
     //when
     indexes = [self.path getIndexesInRect:rect];
-    NSIndexPath *expected4 = [NSIndexPath indexPathForItem:5 inSection:0];
     NSIndexPath *expected1 = [NSIndexPath indexPathForItem:6 inSection:0];
     NSIndexPath *expected2 = [NSIndexPath indexPathForItem:7 inSection:0];
     NSIndexPath *expected3 = [NSIndexPath indexPathForItem:8 inSection:0];
+    NSIndexPath *expected4 = [NSIndexPath indexPathForItem:5 inSection:0];
 
     // then
     XCTAssertTrue([indexes count] == 4);
@@ -678,14 +678,14 @@
 
 - (void)testIndexesInRect_cornersInsideRightBot {
     //given
-    CGRect rect = CGRectMake(210.f, 390.f, 60.f, 60.f);
+    CGRect rect = CGRectMake(210.f, 300.f, 60.f, 60.f);
     NSArray *indexes;
 
     //when
     indexes = [self.path getIndexesInRect:rect];
-    NSIndexPath *expected3 = [NSIndexPath indexPathForItem:3 inSection:0];
     NSIndexPath *expected1 = [NSIndexPath indexPathForItem:4 inSection:0];
     NSIndexPath *expected2 = [NSIndexPath indexPathForItem:5 inSection:0];
+    NSIndexPath *expected3 = [NSIndexPath indexPathForItem:3 inSection:0];
     NSIndexPath *expected4 = [NSIndexPath indexPathForItem:8 inSection:0];
 
     // then
