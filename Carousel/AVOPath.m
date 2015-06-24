@@ -10,6 +10,13 @@
 
 @property (strong, nonatomic, readonly) NSArray *possibleOutcomes;
 
+- (void)setDistance:(CGFloat *)distance andDirection:(CGPoint *)direction fromPoint:(CGPoint)from toPoint:(CGPoint)to;
+
+- (NSArray *)getSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders;
+
+- (NSIndexPath *)getPathForArray:(NSArray *)result;
+
+- (NSIndexPath *)getPathForPoint:(CGPoint)point inGrid:(struct Grid)grid;
 @end
 
 @implementation AVOPath {
@@ -65,53 +72,8 @@
 - (NSIndexPath *)getCellIndexWithPoint:(CGPoint)point {
     NSIndexPath *res = nil;
 
-    CGFloat xLeftCellLeftBorder = self.sizeCalculator.horizontalInset;
-    CGFloat xLeftCellRightBorder = xLeftCellLeftBorder + self.sizeCalculator.cellSize.width;
-    CGFloat xCenterCellLeftBorder = xLeftCellRightBorder + self.sizeCalculator.spaceBetweenCells;
-    CGFloat xCenterCellRightBorder = xCenterCellLeftBorder + self.sizeCalculator.cellSize.width;
-    CGFloat xRightCellLeftBorder = xCenterCellRightBorder + self.sizeCalculator.spaceBetweenCells;
-    CGFloat xRightCellRightBorder = xRightCellLeftBorder + self.sizeCalculator.cellSize.width;
-
-    CGFloat yTopCellTopBorder = self.sizeCalculator.horizontalInset;
-    CGFloat yTopCellBotBorder = yTopCellTopBorder + self.sizeCalculator.cellSize.height;
-    CGFloat yCenterCellTopBorder = yTopCellBotBorder + self.sizeCalculator.spaceBetweenCells;
-    CGFloat yCenterCellBotBorder = yCenterCellTopBorder + self.sizeCalculator.cellSize.height;
-    CGFloat yBotCellTopBorder = yCenterCellBotBorder + self.sizeCalculator.spaceBetweenCells;
-    CGFloat yBotCellBotBorder = yBotCellTopBorder + self.sizeCalculator.cellSize.height;
-
-    BOOL pointInLeftColumn = point.x >= xLeftCellLeftBorder && point.x <= xLeftCellRightBorder;
-    BOOL pointInCenterColumn = point.x >= xCenterCellLeftBorder && point.x <= xCenterCellRightBorder;
-    BOOL pointInRightColumn = point.x >= xRightCellLeftBorder && point.x <= xRightCellRightBorder;
-
-    BOOL pointInTopRow = point.y >= yTopCellTopBorder && point.y <= yTopCellBotBorder;
-    BOOL pointInCenterRow = point.y >= yCenterCellTopBorder && point.y <= yCenterCellBotBorder;
-    BOOL pointInBotRow = point.y >= yBotCellTopBorder && point.y <= yBotCellBotBorder;
-
-    NSArray *result = @[
-            @[
-                    @(pointInTopRow && pointInLeftColumn),
-                    @(pointInTopRow && pointInCenterColumn),
-                    @(pointInTopRow && pointInRightColumn)
-            ],
-            @[
-                    @(pointInCenterRow && pointInLeftColumn),
-                    @(pointInCenterRow && pointInCenterColumn),
-                    @(pointInCenterRow && pointInRightColumn)
-            ],
-            @[
-                    @(pointInBotRow && pointInLeftColumn),
-                    @(pointInBotRow && pointInCenterColumn),
-                    @(pointInBotRow && pointInRightColumn)
-            ]
-    ];
-
-    for (NSUInteger i = 0; i < [[self possibleOutcomes] count]; i++) {
-        for (NSUInteger y = 0; y < [[self possibleOutcomes][i] count]; y++) {
-            if ([result[i][y] boolValue]) {
-                res = [self possibleOutcomes][i][y];
-            }
-        }
-    }
+    struct Grid frames = self.sizeCalculator.cellFrames;
+    res = [self getPathForPoint:point inGrid:frames];
 
     return res;
 }
@@ -119,66 +81,12 @@
 - (NSIndexPath *)getNearestCellIndexFromPoint:(CGPoint)point withResultDirection:(CGPoint *)direction andResultDistance:(CGFloat *)distance {
     NSIndexPath *res = nil;
 
-    CGFloat xLeftCellLeftBorder = 0.f;
-    CGFloat xLeftCellRightBorder = xLeftCellLeftBorder + self.sizeCalculator.cellSize.width + self.sizeCalculator.horizontalInset + self.sizeCalculator.spaceBetweenCells / 2;
-    CGFloat xCenterCellLeftBorder = xLeftCellRightBorder;
-    CGFloat xCenterCellRightBorder = xCenterCellLeftBorder + self.sizeCalculator.cellSize.width + self.sizeCalculator.spaceBetweenCells;
-    CGFloat xRightCellLeftBorder = xCenterCellRightBorder;
-    CGFloat xRightCellRightBorder = xRightCellLeftBorder + self.sizeCalculator.cellSize.width + self.sizeCalculator.horizontalInset + self.sizeCalculator.spaceBetweenCells / 2;
-
-    CGFloat yTopCellTopBorder = 0.f;
-    CGFloat yTopCellBotBorder = yTopCellTopBorder + self.sizeCalculator.cellSize.height + self.sizeCalculator.verticalInset + self.sizeCalculator.spaceBetweenCells / 2;
-    CGFloat yCenterCellTopBorder = yTopCellBotBorder;
-    CGFloat yCenterCellBotBorder = yCenterCellTopBorder + self.sizeCalculator.cellSize.height + self.sizeCalculator.spaceBetweenCells;
-    CGFloat yBotCellTopBorder = yCenterCellBotBorder;
-    CGFloat yBotCellBotBorder = yBotCellTopBorder + self.sizeCalculator.cellSize.height + self.sizeCalculator.verticalInset + self.sizeCalculator.spaceBetweenCells / 2;
-
-    BOOL pointInLeftColumn = point.x >= xLeftCellLeftBorder && point.x <= xLeftCellRightBorder;
-    BOOL pointInCenterColumn = point.x >= xCenterCellLeftBorder && point.x <= xCenterCellRightBorder;
-    BOOL pointInRightColumn = point.x >= xRightCellLeftBorder && point.x <= xRightCellRightBorder;
-
-    BOOL pointInTopRow = point.y >= yTopCellTopBorder && point.y <= yTopCellBotBorder;
-    BOOL pointInCenterRow = point.y >= yCenterCellTopBorder && point.y <= yCenterCellBotBorder;
-    BOOL pointInBotRow = point.y >= yBotCellTopBorder && point.y <= yBotCellBotBorder;
-
-    NSArray *result = @[
-            @[
-                    @(pointInTopRow && pointInLeftColumn),
-                    @(pointInTopRow && pointInCenterColumn),
-                    @(pointInTopRow && pointInRightColumn)
-            ],
-            @[
-                    @(pointInCenterRow && pointInLeftColumn),
-                    @(pointInCenterRow && pointInCenterColumn),
-                    @(pointInCenterRow && pointInRightColumn)
-            ],
-            @[
-                    @(pointInBotRow && pointInLeftColumn),
-                    @(pointInBotRow && pointInCenterColumn),
-                    @(pointInBotRow && pointInRightColumn)
-            ]
-    ];
-
-    for (NSUInteger i = 0; i < [[self possibleOutcomes] count]; i++) {
-        for (NSUInteger y = 0; y < [[self possibleOutcomes][i] count]; y++) {
-            if ([result[i][y] boolValue]) {
-                res = [self possibleOutcomes][i][y];
-            }
-        }
-    }
+    struct Grid borders = self.sizeCalculator.borders;
+    res = [self getPathForPoint:point inGrid:borders];
 
     CGPoint center = [self getCenterForIndexPath:res];
 
-    CGFloat x = center.x - point.x;
-    CGFloat y = center.y - point.y;
-
-    CGFloat dist = (CGFloat) sqrt(x*x + y*y);
-
-    x /= dist;
-    y /= dist;
-
-    *direction = CGPointMake(x, y);
-    *distance = dist;
+    [self setDistance:distance andDirection:direction fromPoint:point toPoint:center];
 
     return res;
 }
@@ -213,5 +121,65 @@
     return _possibleOutcomes;
 }
 
+- (NSArray *)getSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders {
+    BOOL pointInLeftColumn = point.x >= borders.xLeftCellLeftBorder && point.x <= borders.xLeftCellRightBorder;
+    BOOL pointInCenterColumn = point.x >= borders.xCenterCellLeftBorder && point.x <= borders.xCenterCellRightBorder;
+    BOOL pointInRightColumn = point.x >= borders.xRightCellLeftBorder && point.x <= borders.xRightCellRightBorder;
+
+    BOOL pointInTopRow = point.y >= borders.yTopCellTopBorder && point.y <= borders.yTopCellBotBorder;
+    BOOL pointInCenterRow = point.y >= borders.yCenterCellTopBorder && point.y <= borders.yCenterCellBotBorder;
+    BOOL pointInBotRow = point.y >= borders.yBotCellTopBorder && point.y <= borders.yBotCellBotBorder;
+
+    NSArray *result = @[
+            @[
+                    @(pointInTopRow && pointInLeftColumn),
+                    @(pointInTopRow && pointInCenterColumn),
+                    @(pointInTopRow && pointInRightColumn)
+            ],
+            @[
+                    @(pointInCenterRow && pointInLeftColumn),
+                    @(pointInCenterRow && pointInCenterColumn),
+                    @(pointInCenterRow && pointInRightColumn)
+            ],
+            @[
+                    @(pointInBotRow && pointInLeftColumn),
+                    @(pointInBotRow && pointInCenterColumn),
+                    @(pointInBotRow && pointInRightColumn)
+            ]
+    ];
+    return result;
+}
+
+- (NSIndexPath *)getPathForArray:(NSArray *)result {
+    NSIndexPath *res;
+    for (NSUInteger i = 0; i < [[self possibleOutcomes] count]; i++) {
+        for (NSUInteger y = 0; y < [[self possibleOutcomes][i] count]; y++) {
+            if ([result[i][y] boolValue]) {
+                res = [self possibleOutcomes][i][y];
+            }
+        }
+    }
+    return res;
+}
+
+- (NSIndexPath *)getPathForPoint:(CGPoint)point inGrid:(struct Grid)grid {
+    NSIndexPath *res;
+    NSArray *result = [self getSectorHitWithPoint:point borders:grid];
+    res = [self getPathForArray:result];
+    return res;
+}
+
+- (void)setDistance:(CGFloat *)distance andDirection:(CGPoint *)direction fromPoint:(CGPoint)from toPoint:(CGPoint)to {
+    CGFloat x = to.x - from.x;
+    CGFloat y = to.y - from.y;
+
+    CGFloat dist = (CGFloat) sqrt(x*x + y*y);
+
+    x /= dist;
+    y /= dist;
+
+    *direction = CGPointMake(x, y);
+    *distance = dist;
+}
 
 @end
