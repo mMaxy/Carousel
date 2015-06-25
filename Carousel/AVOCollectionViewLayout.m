@@ -22,7 +22,6 @@
 @property (assign, nonatomic) CGFloat whilePanCellOffset;
 @property (assign, nonatomic) CGFloat velocity;
 @property (assign, nonatomic) CGFloat acceleration;
-@property (assign, nonatomic) BOOL clockwise;
 @property (assign, nonatomic, readonly) double maxCellsOffset;
 @property (assign, nonatomic, readonly) CGRect rails;
 @property (assign, nonatomic, readonly) CGFloat railsHeightToWidthRelation;
@@ -33,7 +32,9 @@
 
 @end
 
-@implementation AVOCollectionViewLayout
+@implementation AVOCollectionViewLayout {
+    double _lastChange;
+}
 
 @synthesize sizeCalculator = _sizeCalculator;
 @synthesize path = _path;
@@ -64,7 +65,7 @@
     _acceleration = 0.f;
     _velocity = 0.f;
 
-    [self setupScrollTimerClockwise:YES];
+    [self setupScrollTimer];
 
     [self setupTouches];
 }
@@ -89,12 +90,22 @@
 #pragma mark Tap Handlers
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
+
+    CGPoint translation = [gestureRecognizer translationInView:self.collectionView];
+    CGPoint point = [gestureRecognizer locationInView:self.collectionView];
+
+    CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
+    double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.collectionView.frame];
+    double endAngle = [self.rotator getAngleFromPoint:point onFrame:self.collectionView.frame];
+
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
-            CGPoint translation = [gestureRecognizer translationInView:self.collectionView];
-            CGPoint point = [gestureRecognizer locationInView:self.collectionView];
+            self.velocity = 0.f;
+            self.acceleration = 0.f;
 
+            _lastChange = CFAbsoluteTimeGetCurrent();
+            
             CGFloat x = point.x - self.sizeCalculator.horizontalInset;
             CGFloat y = point.y - self.sizeCalculator.verticalInset;
             point = CGPointMake(x, y);
@@ -103,26 +114,50 @@
                 return;
             }
 
-            CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
-            double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.collectionView.frame];
-            double endAngle = [self.rotator getAngleFromPoint:point onFrame:self.collectionView.frame];
-
             self.cellsOffset = self.whilePanCellOffset + (CGFloat) (endAngle-startAngle);
             if (self.cellsOffset > 2*M_PI)
                 self.cellsOffset -= 2*M_PI;
             if (self.cellsOffset < 0.f)
                 self.cellsOffset += 2*M_PI;
-            NSLog(@"Pan from ANGLE : %f, to ANGLE: %f ", startAngle, endAngle);
+
         } break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
             self.whilePanCellOffset = self.cellsOffset;
-//            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
-//
-//            if (velocity.x != 0 && velocity.y != 0) {
-//
-//                self.velocity = velocity;
-//            }
+
+            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
+
+            double x = velocity.x * cos(self.cellsOffset) + velocity.y * sin(self.cellsOffset);
+            double y = velocity.y * cos(self.cellsOffset) - velocity.x * sin(self.cellsOffset);
+            velocity.x = (CGFloat) x;
+            velocity.y = (CGFloat) y;
+
+            CGFloat modVel = (CGFloat) sqrt(velocity.x*velocity.x + velocity.y*velocity.y) / 100000;
+
+            double relationalVelocity = modVel / M_PI_4;
+            
+
+            double curTime = CFAbsoluteTimeGetCurrent();
+            double timeElapsed = curTime - _lastChange;
+            if ( timeElapsed < 0.1 )
+                self.velocity = (CGFloat) relationalVelocity;
+            else
+                self.velocity = 0.f;
+            
+            if (modVel)
+            if (velocity.y > 0) {
+                //clockwise
+                self.velocity *= -1;
+                self.acceleration = (self.velocity / 100 );
+            } else if (velocity.y < 0) {
+                //counter clockwise
+
+                self.acceleration = (self.velocity / 100 );
+            } else {
+                //don't move
+                self.acceleration = 0.f;
+            }
+
         } break;
         default: {
             // Do nothing...
@@ -133,6 +168,8 @@
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {
     switch(gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
+            self.velocity = 0.f;
+            self.acceleration = 0.f;
             CGPoint point = [gestureRecognizer locationInView:self.collectionView];
             NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
             [self.delegate collectionView:self.collectionView
@@ -157,22 +194,19 @@
              tapOnCellAtIndexPath:indexPath];
 }
 
-- (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point {
-    CGFloat x = point.x - self.sizeCalculator.horizontalInset;
-    CGFloat y = point.y - self.sizeCalculator.verticalInset;
-    point = CGPointMake(x, y);
-    NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
-    point.x += self.sizeCalculator.horizontalInset;
-    point.y += self.sizeCalculator.verticalInset;
-    if (indexPath.item != 8) {
-        point = [self.path getCenterForIndexPath:indexPath];
-
-        [self moveCenter:&point byAngle:-self.cellsOffset];
+- (void) handleTimer {
+    _cellsOffset += _velocity;
+    if (_cellsOffset >= _maxCellsOffset) {
+        _cellsOffset -= _maxCellsOffset;
     }
-    point.x -= self.sizeCalculator.horizontalInset;
-    point.y -= self.sizeCalculator.verticalInset;
-    indexPath = [self.path getCellIndexWithPoint:point];
-    return indexPath;
+
+    _velocity -= _acceleration;
+    if (self.velocity <= 0.005f && self.velocity >= -0.005f ) {
+        _velocity = 0.f;
+        _acceleration = 0.f;
+    }
+    [super invalidateLayout];
+
 }
 
 #pragma mark - UICollectionViewLayout Implementation
@@ -265,54 +299,6 @@
     (*center) = CGPointMake(rotated.x , rotated.y);
 }
 
-- (CGPoint)getPossibleDirectionFromPoint:(CGPoint)point {
-    BOOL leftTopCorner  = point.x == self.rails.origin.x && point.y == self.rails.origin.y;
-    BOOL rightTopCorner = point.x == self.rails.origin.x + self.rails.size.width && point.y == self.rails.origin.y;
-    BOOL leftBotCorner  = point.x == self.rails.origin.x && point.y == self.rails.origin.y + self.rails.size.height;
-    BOOL rightBotCorner = point.x == self.rails.origin.x + self.rails.size.width && point.y == self.rails.origin.y + self.rails.size.height;
-
-    if (leftTopCorner) {
-        if (self.velocity < 0)
-            return CGPointMake(1.f, 0.f);
-        else
-            return CGPointMake(0.f, 1.f);
-    }
-    if (rightTopCorner) {
-        if (self.velocity < 0)
-            return CGPointMake(0.f, 1.f);
-        else
-            return CGPointMake(-1.f, 0.f);
-    }
-    if (leftBotCorner) {
-        if (self.velocity < 0)
-            return CGPointMake(0.f, -1.f);
-        else
-            return CGPointMake(1.f, 0.f);
-    }
-    if (rightBotCorner) {
-        if (self.velocity < 0)
-            return CGPointMake(-1.f, 0.f);
-        else
-            return CGPointMake(0.f, -1.f);
-    }
-
-    if (point.x == self.rails.origin.x) {
-        return CGPointMake(0.f, _clockwise ? -1.f : 1.f);
-    }
-    if (point.x == self.rails.origin.x + self.rails.size.width) {
-        return CGPointMake(0.f, _clockwise ? 1.f : -1.f);
-    }
-
-    if (point.y == self.self.rails.origin.y) {
-        return CGPointMake(_clockwise ? 1.f : -1.f, 0.f);
-    }
-    if (point.y == self.self.rails.origin.y + self.rails.size.height) {
-        return CGPointMake(_clockwise ? -1.f : 1.f, 0.f);
-    }
-
-    return CGPointZero;
-}
-
 - (void)invalidatesScrollTimer {
     if (!self.displayLink.paused) {
         [self.displayLink invalidate];
@@ -320,25 +306,29 @@
     self.displayLink = nil;
 }
 
-- (void)setupScrollTimerClockwise:(BOOL) clockwise {
+- (void)setupScrollTimer {
     [self invalidatesScrollTimer];
-    self.clockwise = clockwise;
-    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleScroll)];
+    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleTimer)];
     [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 }
 
-- (void)handleScroll {
-    _cellsOffset += _velocity;
-    if (_cellsOffset >= _maxCellsOffset) {
-        _cellsOffset -= _maxCellsOffset;
+- (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point {
+    CGFloat x = point.x - self.sizeCalculator.horizontalInset;
+    CGFloat y = point.y - self.sizeCalculator.verticalInset;
+    point = CGPointMake(x, y);
+    NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
+    point.x += self.sizeCalculator.horizontalInset;
+    point.y += self.sizeCalculator.verticalInset;
+    if (indexPath.item != 8) {
+        point = [self.path getCenterForIndexPath:indexPath];
+
+        [self moveCenter:&point byAngle:-self.cellsOffset];
     }
-
-    _velocity -= _acceleration;
-
-    [super invalidateLayout];
-
+    point.x -= self.sizeCalculator.horizontalInset;
+    point.y -= self.sizeCalculator.verticalInset;
+    indexPath = [self.path getCellIndexWithPoint:point];
+    return indexPath;
 }
-
 
 #pragma mark Getters and Setters
 
@@ -362,6 +352,19 @@
         [self calculateDefaults];
     }
     return _sizeCalculator;
+}
+
+-(NSArray *) fixedAngles {
+    return @[
+            @(0), //0
+            @(M_PI_4), //45
+            @(M_PI_2), //90
+            @(M_PI_2 + M_PI_4), //135
+            @(2 * M_PI), //180
+            @(2*M_PI + M_PI_4), //225
+            @(2*M_PI + M_PI_2), //270
+            @(2*M_PI + M_PI_2 + M_PI_4), //315
+    ];
 }
 
 - (id<AVOCollectionViewDelegateLayout>)delegate {
