@@ -11,7 +11,7 @@
 #import "AVOPath.h"
 #import "AVORotator.h"
 
-@interface AVOCollectionViewLayout ()
+@interface AVOCollectionViewLayout () <UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic, readonly) AVOSizeCalculator *sizeCalculator;
 @property (strong, nonatomic, readonly) AVOPath *path;
@@ -26,6 +26,10 @@
 @property (assign, nonatomic, readonly) CGRect rails;
 @property (assign, nonatomic, readonly) CGFloat railsHeightToWidthRelation;
 
+@property (strong, nonatomic, readonly) UITapGestureRecognizer *tapGestureRecognizer;
+@property (strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
+@property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
+
 @end
 
 @implementation AVOCollectionViewLayout
@@ -33,6 +37,104 @@
 @synthesize sizeCalculator = _sizeCalculator;
 @synthesize path = _path;
 @synthesize rotator = _rotator;
+
+- (void)calculateDefaults {
+    _sizeCalculator = [[AVOSizeCalculator alloc] init];
+    _path = [[AVOPath alloc] init];
+
+    [self.sizeCalculator setRectToFit:self.collectionView.frame];
+    [self.path setSizeCalculator:self.sizeCalculator];
+
+    [self invalidatesScrollTimer];
+
+    CGFloat railYMin = [self.path getCenterForIndex:2].y;
+    CGFloat railYMax = [self.path getCenterForIndex:4].y;
+    CGFloat railXMin = [self.path getCenterForIndex:0].x;
+    CGFloat railXMax = [self.path getCenterForIndex:2].x;
+
+    double offsetMax = M_PI * 2;
+    _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
+
+    _maxCellsOffset = offsetMax;
+
+    _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
+
+    _cellsOffset = M_PI_2;//0.f;
+    _acceleration = 0.f;
+    _velocity = 0.f;
+
+    [self setupScrollTimerClockwise:YES];
+
+    [self setupTouches];
+}
+
+- (void)setupTouches {
+    _tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    _tapGestureRecognizer.delegate = self;
+    [self.collectionView addGestureRecognizer:_tapGestureRecognizer];
+
+    _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                                                action:@selector(handleLongPressGesture:)];
+    _longPressGestureRecognizer.delegate = self;
+
+    [self.collectionView addGestureRecognizer:_longPressGestureRecognizer];
+
+    _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
+                                                                    action:@selector(handlePanGesture:)];
+    _panGestureRecognizer.delegate = self;
+    [self.collectionView addGestureRecognizer:_panGestureRecognizer];
+}
+
+#pragma mark Tap Handlers
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
+
+}
+
+- (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {
+    switch(gestureRecognizer.state) {
+        case UIGestureRecognizerStateBegan: {
+            CGPoint point = [gestureRecognizer locationInView:self.collectionView];
+            NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
+            [self.delegate collectionView:self.collectionView
+               longpressOnCellAtIndexPath:indexPath];
+        } break;
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded: {
+            CGPoint point = [gestureRecognizer locationInView:self.collectionView];
+            NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
+            [self.delegate collectionView:self.collectionView
+                    liftOnCellAtIndexPath:indexPath];
+        } break;
+
+        default: break;
+    }
+}
+
+- (void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
+    CGPoint point = [gestureRecognizer locationInView:self.collectionView];
+    NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
+    [self.delegate collectionView:self.collectionView
+             tapOnCellAtIndexPath:indexPath];
+}
+
+- (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point {
+    CGFloat x = point.x - self.sizeCalculator.horizontalInset;
+    CGFloat y = point.y - self.sizeCalculator.verticalInset;
+    point = CGPointMake(x, y);
+    NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
+    point.x += self.sizeCalculator.horizontalInset;
+    point.y += self.sizeCalculator.verticalInset;
+    if (indexPath.item != 8) {
+        point = [self.path getCenterForIndexPath:indexPath];
+
+        [self moveCenter:&point byAngle:-self.cellsOffset];
+    }
+    point.x -= self.sizeCalculator.horizontalInset;
+    point.y -= self.sizeCalculator.verticalInset;
+    indexPath = [self.path getCellIndexWithPoint:point];
+    return indexPath;
+}
 
 #pragma mark - UICollectionViewLayout Implementation
 
@@ -97,7 +199,7 @@
     frame.size = [self.sizeCalculator cellSize];
     CGPoint center = [self.path getCenterForIndex:index];
     if (index != 8) {
-        [self moveCenter:&center];
+        [self moveCenter:&center byAngle:self.cellsOffset];
     }
 
     frame.origin = CGPointMake(center.x - frame.size.width/2, center.y - frame.size.height/2);
@@ -105,9 +207,9 @@
     return frame;
 }
 
-- (void)moveCenter:(CGPoint *)center {
+- (void)moveCenter:(CGPoint *)center byAngle:(double) angle {
     CGPoint p = (*center);
-    double remain = self.cellsOffset;
+    double remain = angle;
 
     CGRect f = self.rails;
 
@@ -196,34 +298,6 @@
 
     [super invalidateLayout];
 
-}
-
-- (void)calculateDefaults {
-    _sizeCalculator = [[AVOSizeCalculator alloc] init];
-    _path = [[AVOPath alloc] init];
-
-    [self.sizeCalculator setRectToFit:self.collectionView.frame];
-    [self.path setSizeCalculator:self.sizeCalculator];
-
-    [self invalidatesScrollTimer];
-
-    CGFloat railYMin = [self.path getCenterForIndex:2].y;
-    CGFloat railYMax = [self.path getCenterForIndex:4].y;
-    CGFloat railXMin = [self.path getCenterForIndex:0].x;
-    CGFloat railXMax = [self.path getCenterForIndex:2].x;
-
-    double offsetMax = M_PI * 2;
-    _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
-
-    _maxCellsOffset = offsetMax;
-
-    _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
-
-    _cellsOffset = 0.f;
-    _acceleration = 0.f;
-    _velocity = 0.f;
-
-    [self setupScrollTimerClockwise:YES];
 }
 
 
