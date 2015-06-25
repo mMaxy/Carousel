@@ -9,22 +9,21 @@
 #import "AVOCollectionViewLayout.h"
 #import "AVOSizeCalculator.h"
 #import "AVOPath.h"
+#import "AVORotator.h"
 
 @interface AVOCollectionViewLayout ()
 
 @property (strong, nonatomic, readonly) AVOSizeCalculator *sizeCalculator;
 @property (strong, nonatomic, readonly) AVOPath *path;
+@property (strong, nonatomic, readonly) AVORotator *rotator;
 
 @property (strong, nonatomic) CADisplayLink *displayLink;
 @property (assign, nonatomic) CGFloat cellsOffset;
 @property (assign, nonatomic) CGFloat velocity;
 @property (assign, nonatomic) CGFloat acceleration;
 @property (assign, nonatomic) BOOL clockwise;
-@property (assign, nonatomic, readonly) CGFloat maxCellsOffset;
-@property (assign, nonatomic, readonly) CGFloat railXMin;
-@property (assign, nonatomic, readonly) CGFloat railXMax;
-@property (assign, nonatomic, readonly) CGFloat railYMin;
-@property (assign, nonatomic, readonly) CGFloat railYMax;
+@property (assign, nonatomic, readonly) double maxCellsOffset;
+@property (assign, nonatomic, readonly) CGRect rails;
 
 @end
 
@@ -32,6 +31,7 @@
 
 @synthesize sizeCalculator = _sizeCalculator;
 @synthesize path = _path;
+@synthesize rotator = _rotator;
 
 #pragma mark - UICollectionViewLayout Implementation
 
@@ -105,43 +105,26 @@
 }
 
 - (void)moveCenter:(CGPoint *)center {
-    CGFloat newX = (*center).x;
-    CGFloat newY = (*center).y;
-    CGFloat remain = self.cellsOffset;
-    //TODO rework with offset
-    while (remain > 0.f) {
-        CGPoint direction = [self getPossibleDirectionFromPoint:CGPointMake(newX, newY)];
-        newX += direction.x * remain;
-        newY += direction.y * remain;
-        remain = 0;
-        if (newX > self.railXMax) {
-            remain = newX - self.railXMax;
-            newX = self.railXMax;
-        }
-        if (newX < self.railXMin) {
-            remain = self.railXMin - newX;
-            newX = self.railXMin;
-        }
-        if (newY > self.railYMax) {
-            remain = newY - self.railYMax;
-            newY = self.railYMax;
-        }
-        if (newY < self.railYMin) {
-            remain = self.railYMin - newY;
-            newY = self.railYMin;
-        }
+    CGPoint p = (*center);
+    double remain = self.cellsOffset;
 
-    }
+    CGRect f = self.rails;
 
-    (*center).x = newX;
-    (*center).y = newY;
+    p.x = p.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
+    p.y = p.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
+
+    CGPoint rotated = [self.rotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
+
+    rotated.x = rotated.x + self.sizeCalculator.horizontalInset + self.sizeCalculator.cellSize.width/2;
+    rotated.y = rotated.y + self.sizeCalculator.verticalInset + self.sizeCalculator.cellSize.height/2;
+    (*center) = CGPointMake(rotated.x , rotated.y);
 }
 
 - (CGPoint)getPossibleDirectionFromPoint:(CGPoint)point {
-    BOOL leftTopCorner  = point.x == self.railXMin && point.y == self.railYMin;
-    BOOL rightTopCorner = point.x == self.railXMax && point.y == self.railYMin;
-    BOOL leftBotCorner  = point.x == self.railXMin && point.y == self.railYMax;
-    BOOL rightBotCorner = point.x == self.railXMax && point.y == self.railYMax;
+    BOOL leftTopCorner  = point.x == self.rails.origin.x && point.y == self.rails.origin.y;
+    BOOL rightTopCorner = point.x == self.rails.origin.x + self.rails.size.width && point.y == self.rails.origin.y;
+    BOOL leftBotCorner  = point.x == self.rails.origin.x && point.y == self.rails.origin.y + self.rails.size.height;
+    BOOL rightBotCorner = point.x == self.rails.origin.x + self.rails.size.width && point.y == self.rails.origin.y + self.rails.size.height;
 
     if (leftTopCorner) {
         if (self.clockwise)
@@ -168,17 +151,17 @@
             return CGPointMake(0.f, -1.f);
     }
 
-    if (point.x == self.railXMin) {
+    if (point.x == self.rails.origin.x) {
         return CGPointMake(0.f, _clockwise ? -1.f : 1.f);
     }
-    if (point.x == self.railXMax) {
+    if (point.x == self.rails.origin.x + self.rails.size.width) {
         return CGPointMake(0.f, _clockwise ? 1.f : -1.f);
     }
 
-    if (point.y == self.railYMin) {
+    if (point.y == self.self.rails.origin.y) {
         return CGPointMake(_clockwise ? 1.f : -1.f, 0.f);
     }
-    if (point.y == self.railYMax) {
+    if (point.y == self.self.rails.origin.y + self.rails.size.height) {
         return CGPointMake(_clockwise ? -1.f : 1.f, 0.f);
     }
 
@@ -220,20 +203,19 @@
 
     [self invalidatesScrollTimer];
 
-    _railYMin = [self.path getCenterForIndex:2].y;
-    _railYMax = [self.path getCenterForIndex:4].y;
-    _railXMin = [self.path getCenterForIndex:0].x;
-    _railXMax = [self.path getCenterForIndex:2].x;
+    CGFloat railYMin = [self.path getCenterForIndex:2].y;
+    CGFloat railYMax = [self.path getCenterForIndex:4].y;
+    CGFloat railXMin = [self.path getCenterForIndex:0].x;
+    CGFloat railXMax = [self.path getCenterForIndex:2].x;
 
-    CGFloat offsetMax = 0.f;
-    offsetMax += 2 * self.railXMax - self.railXMin;
-    offsetMax += 2 * self.railYMax - self.railYMin;
+    double offsetMax = M_PI * 2;
+    _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railYMax-railYMin);
 
     _maxCellsOffset = offsetMax;
 
     _cellsOffset = 0.f;
     _acceleration = 0.f;
-    _velocity = 2.f;
+    _velocity = (CGFloat) (offsetMax / 1000.f);
 
     [self setupScrollTimerClockwise:YES];
 }
@@ -247,6 +229,14 @@
     }
     return _path;
 }
+
+- (AVORotator *)rotator {
+    if (!_rotator) {
+        _rotator = [[AVORotator alloc] init];
+    }
+    return _rotator;
+}
+
 
 - (AVOSizeCalculator *)sizeCalculator {
     if (!_path || !_sizeCalculator) {

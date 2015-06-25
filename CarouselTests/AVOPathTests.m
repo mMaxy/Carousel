@@ -696,20 +696,4 @@
     XCTAssertTrue([indexes containsObject:expected4]);
 }
 
-- (void)testIndexPaths {
-    //given
-    NSIndexPath *tmp1;
-    NSIndexPath *tmp2;
-    BOOL res;
-
-    //when
-    tmp1 = [NSIndexPath indexPathForItem:0 inSection:0];
-    tmp2 = [NSIndexPath indexPathForItem:0 inSection:0];
-    res = [tmp1 isEqual:tmp2];
-
-    //then
-    XCTAssertTrue(res);
-    XCTAssertFalse(tmp1 == tmp2);
-}
-
 @end

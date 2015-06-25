@@ -72,7 +72,7 @@
 
     // then
     XCTAssertEqual(self.calc.cellSize.width, 100.f);
-    XCTAssertEqual(self.calc.cellSize.height, 133.333328f);
+    XCTAssertEqual(self.calc.cellSize.height, 133.333333333f);
 
     XCTAssertEqual(self.calc.frameSize.width, 320.f);
     XCTAssertEqual(self.calc.frameSize.height, 420.f);
