@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) CADisplayLink *displayLink;
 @property (assign, nonatomic) CGFloat cellsOffset;
+@property (assign, nonatomic) CGFloat whilePanCellOffset;
 @property (assign, nonatomic) CGFloat velocity;
 @property (assign, nonatomic) CGFloat acceleration;
 @property (assign, nonatomic) BOOL clockwise;
@@ -102,29 +103,20 @@
                 return;
             }
 
-            CGPoint centerBefore = [self.path getCenterForIndexPath:indexPath];
-            centerBefore.x -= translation.x;
-            centerBefore.y -= translation.y;
-            centerBefore.x = centerBefore.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
-            centerBefore.y = centerBefore.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
-            centerBefore.y *= 1/self.railsHeightToWidthRelation;
+            CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
+            double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.collectionView.frame];
+            double endAngle = [self.rotator getAngleFromPoint:point onFrame:self.collectionView.frame];
 
-            CGPoint centerAfter = [self.path getCenterForIndexPath:indexPath];
-
-            centerAfter.x = centerAfter.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
-            centerAfter.y = centerAfter.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
-            centerAfter.y *= 1/self.railsHeightToWidthRelation;
-
-            double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.rails];
-            double endAngle = [self.rotator getAngleFromPoint:centerAfter onFrame:self.rails];
-
-            self.cellsOffset += endAngle-startAngle;
-
-            [self invalidateLayout];
+            self.cellsOffset = self.whilePanCellOffset + (CGFloat) (endAngle-startAngle);
+            if (self.cellsOffset > 2*M_PI)
+                self.cellsOffset -= 2*M_PI;
+            if (self.cellsOffset < 0.f)
+                self.cellsOffset += 2*M_PI;
+            NSLog(@"Pan from ANGLE : %f, to ANGLE: %f ", startAngle, endAngle);
         } break;
         case UIGestureRecognizerStateCancelled:
-
         case UIGestureRecognizerStateEnded: {
+            self.whilePanCellOffset = self.cellsOffset;
 //            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
 //
 //            if (velocity.x != 0 && velocity.y != 0) {
@@ -280,25 +272,25 @@
     BOOL rightBotCorner = point.x == self.rails.origin.x + self.rails.size.width && point.y == self.rails.origin.y + self.rails.size.height;
 
     if (leftTopCorner) {
-        if (self.clockwise)
+        if (self.velocity < 0)
             return CGPointMake(1.f, 0.f);
         else
             return CGPointMake(0.f, 1.f);
     }
     if (rightTopCorner) {
-        if (self.clockwise)
+        if (self.velocity < 0)
             return CGPointMake(0.f, 1.f);
         else
             return CGPointMake(-1.f, 0.f);
     }
     if (leftBotCorner) {
-        if (self.clockwise)
+        if (self.velocity < 0)
             return CGPointMake(0.f, -1.f);
         else
             return CGPointMake(1.f, 0.f);
     }
     if (rightBotCorner) {
-        if (self.clockwise)
+        if (self.velocity < 0)
             return CGPointMake(-1.f, 0.f);
         else
             return CGPointMake(0.f, -1.f);
