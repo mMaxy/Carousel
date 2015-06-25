@@ -25,6 +25,7 @@
 @property (assign, nonatomic, readonly) double maxCellsOffset;
 @property (assign, nonatomic, readonly) CGRect rails;
 @property (assign, nonatomic, readonly) CGFloat railsHeightToWidthRelation;
+@property (assign, nonatomic) BOOL panActive;
 
 @property (strong, nonatomic, readonly) UITapGestureRecognizer *tapGestureRecognizer;
 @property (strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
@@ -65,6 +66,8 @@
     _acceleration = 0.f;
     _velocity = 0.f;
 
+    _panActive = NO;
+
     [self setupScrollTimer];
 
     [self setupTouches];
@@ -101,6 +104,7 @@
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
+            self.panActive = YES;
             self.velocity = 0.f;
             self.acceleration = 0.f;
 
@@ -124,6 +128,7 @@
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
             self.whilePanCellOffset = self.cellsOffset;
+            self.panActive = NO;
 
             CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
 
@@ -132,19 +137,17 @@
             velocity.x = (CGFloat) x;
             velocity.y = (CGFloat) y;
 
-            CGFloat modVel = (CGFloat) sqrt(velocity.x*velocity.x + velocity.y*velocity.y) / 100000;
+            CGFloat modVel = (CGFloat) sqrt(velocity.x*velocity.x + velocity.y*velocity.y) / 70000;
 
             double relationalVelocity = modVel / M_PI_4;
             
-
             double curTime = CFAbsoluteTimeGetCurrent();
             double timeElapsed = curTime - _lastChange;
             if ( timeElapsed < 0.1 )
                 self.velocity = (CGFloat) relationalVelocity;
             else
                 self.velocity = 0.f;
-            
-            if (modVel)
+
             if (velocity.y > 0) {
                 //clockwise
                 self.velocity *= -1;
@@ -170,6 +173,7 @@
         case UIGestureRecognizerStateBegan: {
             self.velocity = 0.f;
             self.acceleration = 0.f;
+            self.panActive = YES;
             CGPoint point = [gestureRecognizer locationInView:self.collectionView];
             NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
             [self.delegate collectionView:self.collectionView
@@ -177,6 +181,7 @@
         } break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
+            self.panActive = NO;
             CGPoint point = [gestureRecognizer locationInView:self.collectionView];
             NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
             [self.delegate collectionView:self.collectionView
@@ -201,10 +206,41 @@
     }
 
     _velocity -= _acceleration;
-    if (self.velocity <= 0.005f && self.velocity >= -0.005f ) {
-        _velocity = 0.f;
-        _acceleration = 0.f;
+    BOOL flagStopped = self.velocity <= 0.0005f && self.velocity >= -0.0005f;
+
+    if (flagStopped && !self.panActive) {
+        CGPoint center = [self.path getCenterForIndex:(NSUInteger) 0];
+        NSIndexPath *resBot;
+        CGPoint resDirection;
+        CGFloat resDistance;
+
+        //when
+        [self moveCenter:&center byAngle:self.cellsOffset];
+        resBot = [self.path getNearestCellIndexFromPoint:center
+                                     withResultDirection:&resDirection
+                                       andResultDistance:&resDistance];
+        if (resDistance != 0) {
+            double relationalVelocity =(resDistance) /  M_PI_4 * self.sizeCalculator.cellSize.width;
+            self.velocity = (CGFloat) (relationalVelocity / 100);
+            double x = resDirection.x * cos(self.cellsOffset) + resDirection.y * sin(self.cellsOffset);
+            double y = resDirection.y * cos(self.cellsOffset) - resDirection.x * sin(self.cellsOffset);
+            resDirection.x = (CGFloat) x;
+            resDirection.y = (CGFloat) y;
+
+            if (resDirection.y > 0) {
+                //clockwise
+                self.velocity *= -1;
+            }
+            if (resDirection.y != 0) {
+                self.acceleration = (self.velocity / 10 );
+            } else {
+                //don't move
+                self.acceleration = 0.f;
+            }
+        }
+
     }
+
     [super invalidateLayout];
 
 }
