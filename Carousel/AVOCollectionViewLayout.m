@@ -24,6 +24,7 @@
 @property (assign, nonatomic) BOOL clockwise;
 @property (assign, nonatomic, readonly) double maxCellsOffset;
 @property (assign, nonatomic, readonly) CGRect rails;
+@property (assign, nonatomic, readonly) CGFloat railsHeightToWidthRelation;
 
 @end
 
@@ -112,11 +113,14 @@
 
     p.x = p.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
     p.y = p.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
+    p.y *= 1/self.railsHeightToWidthRelation;
 
     CGPoint rotated = [self.rotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
 
+    rotated.y *=  self.railsHeightToWidthRelation;
     rotated.x = rotated.x + self.sizeCalculator.horizontalInset + self.sizeCalculator.cellSize.width/2;
     rotated.y = rotated.y + self.sizeCalculator.verticalInset + self.sizeCalculator.cellSize.height/2;
+
     (*center) = CGPointMake(rotated.x , rotated.y);
 }
 
@@ -209,13 +213,15 @@
     CGFloat railXMax = [self.path getCenterForIndex:2].x;
 
     double offsetMax = M_PI * 2;
-    _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railYMax-railYMin);
+    _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
 
     _maxCellsOffset = offsetMax;
 
+    _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
+
     _cellsOffset = 0.f;
     _acceleration = 0.f;
-    _velocity = (CGFloat) (offsetMax / 1000.f);
+    _velocity = 0.f;
 
     [self setupScrollTimerClockwise:YES];
 }
