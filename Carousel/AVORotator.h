@@ -12,6 +12,6 @@
 
 @interface AVORotator : NSObject
 
--(CGPoint) rotateFromAngle:(CGFloat)from toAngle:(CGFloat)to inFrame:(CGRect)frame;
+-(CGPoint)rotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame;
 
 @end

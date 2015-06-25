@@ -14,9 +14,8 @@
 
 @interface AVORotatorTests : XCTestCase
 
-@property (strong, nonatomic) AVOPath *path;
-@property (strong, nonatomic) AVOSizeCalculator *calc;
 @property (strong, nonatomic) AVORotator *rotator;
+@property (assign, nonatomic) CGRect frame;
 
 @end
 
@@ -27,15 +26,73 @@
     // Put setup code here. This method is called before the invocation of each test method in the class.
 
     // given
-    self.path = [[AVOPath alloc] init];
-    self.calc = [[AVOSizeCalculator alloc] init];
     self.rotator = [[AVORotator alloc] init];
 
     // when
-    CGRect screen = CGRectMake(0.f, 0.f, 380.f, 500.f);
-    [self.calc setRectToFit:screen];
-    [self.path setSizeCalculator:self.calc];
+    self.frame = CGRectMake(0.f, 0.f, 300.f, 400.f);
 }
+
+-(void) testRotation_FromLeftTopCornerToRightTopCorner {
+    //given
+    CGPoint point = CGPointMake(0.f, 0.f);
+    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
+    CGPoint res;
+
+    //when
+    res = [self.rotator rotatedPointFromPoint:point byAngle:-2 * angleBetweenCellsTop inFrame:self.frame];
+
+    //then
+    XCTAssertEqual(res.x, self.frame.size.width);
+    XCTAssertEqual(res.y, 0.f);
+}
+
+-(void) testRotation_FromLeftTopCornerToTopSideCenter {
+    //given
+    CGPoint point = CGPointMake(0.f, 0.f);
+    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
+    CGPoint res;
+
+    //when
+    res = [self.rotator rotatedPointFromPoint:point byAngle:-angleBetweenCellsTop inFrame:self.frame];
+
+    //then
+    XCTAssertEqual(res.x, self.frame.size.width / 2);
+    XCTAssertEqual(res.y, 0.f);
+}
+
+-(void) testRotation_FromLeftTopCornerToLeftBotCorner {
+    //given
+    CGPoint point = CGPointMake(0.f, 0.f);
+    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
+    CGFloat angleBetweenCellsBot = (CGFloat) ((M_PI - 2*angleBetweenCellsTop) / 2);
+    CGPoint res;
+
+    //when
+    res = [self.rotator rotatedPointFromPoint:point byAngle:2 * angleBetweenCellsBot inFrame:self.frame];
+
+    //then
+    XCTAssertEqual(res.x, 0.f);
+    XCTAssertEqual(res.y, self.frame.size.height);
+}
+
+-(void) testRotation_FromLeftTopCornerToLeftSideCenter {
+    //given
+    CGPoint point = CGPointMake(0.f, 0.f);
+    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
+    CGFloat angleBetweenCellsBot = (CGFloat) ((M_PI - 2*angleBetweenCellsTop) / 2);
+    CGPoint res;
+
+    //when
+    res = [self.rotator rotatedPointFromPoint:point byAngle:angleBetweenCellsBot inFrame:self.frame];
+
+    //then
+    XCTAssertEqual(res.x, 0.f);
+    XCTAssertEqual(res.y, self.frame.size.height / 2);
+}
+
+
+
+
 
 -(void) testPoints {
     //given
@@ -45,9 +102,9 @@
     //when
     p1 = CGPointMake(5.f, 7.f);
     p2 = p1;
-
     p2.x = 300.f;
 
+    //then
     XCTAssertEqual(p1.y, p2.y);
     XCTAssert(p1.x != p2.x);
 }

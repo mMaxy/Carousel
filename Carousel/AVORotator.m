@@ -6,19 +6,21 @@
 #import "AVORotator.h"
 #import "AVOSizeCalculator.h"
 
+#define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
+
 @interface AVORotator()
 
 
 -(BOOL) increaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
--(BOOL) increaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame;
+-(BOOL) increaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame;
 -(BOOL) decreaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
--(BOOL) decreaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame;
+-(BOOL) decreaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame;
 
 -(NSUInteger) defineQuarterForPoint:(CGPoint) point inFrame:(CGRect)frame;
--(NSUInteger) defineQuarterOfAngle:(CGFloat) angle inFrame:(CGRect)frame;
+-(NSUInteger) defineQuarterOfAngle:(double) angle inFrame:(CGRect)frame;
 
--(CGFloat) getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
--(CGPoint) getPointForAngle:(CGFloat)angle onFrame:(CGRect)frame;
+-(double) getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
+-(CGPoint) getPointForAngle:(double)angle onFrame:(CGRect)frame;
 
 @end
 
@@ -26,18 +28,28 @@
 
 }
 
-- (CGPoint)rotateFromAngle:(CGFloat)from toAngle:(CGFloat)to inFrame:(CGRect)frame {
+- (CGPoint)rotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame {
     CGPoint result;
 
-    //TODO
+    double startAngle = [self getAngleFromPoint:from onFrame:frame];
+
+    startAngle += angle;
+    while (startAngle < 0.f) {
+        startAngle += 2 * M_PI;
+    }
+    while (startAngle >= 2 * M_PI) {
+        startAngle -= 2 * M_PI;
+    }
+
+    result = [self getPointForAngle:startAngle onFrame:frame];
 
     return result;
 }
 
 #pragma mark Private Methods
 
-- (CGFloat)getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame {
-    CGFloat res = 0.f;
+- (double)getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame {
+    double res;
 
     CGPoint p = point;
     CGRect f = frame;
@@ -51,44 +63,43 @@
     CGFloat x = p.x - f.size.width / 2;
     CGFloat y = f.size.height / 2 - p.y;
 
-    double tg = tan(y/x);
-    res = (CGFloat)atan(tg);
+    double tg = y/x;
+    res = atan(tg);
 
     while (quarter != 0) {
-        [self decreaseQuarterOfAngle:&res inFrame:&f];
+        [self increaseQuarterOfAngle:&res inFrame:&f];
         quarter --;
     }
 
     return res;
 }
 
-- (CGPoint)getPointForAngle:(CGFloat)angle onFrame:(CGRect)frame {
-    CGPoint res = CGPointZero;
+- (CGPoint)getPointForAngle:(double)angle onFrame:(CGRect)frame {
+    CGPoint res;
 
-    CGFloat a = angle;
+    double a = angle;
     CGRect f = frame;
-
     NSUInteger quarter = 0;
 
     while ([self decreaseQuarterOfAngle:&a inFrame:&f]) {
         quarter ++;
     }
 
-    CGFloat x;
-    CGFloat y;
-    CGFloat corner = [self getAngleFromPoint:CGPointMake(f.size.width, 0.f) onFrame:f];
+    double x;
+    double y;
+    double corner = [self getAngleFromPoint:CGPointMake(f.size.width, 0.f) onFrame:f];
     if (a > corner) {
         y = f.size.height / 2;
-        x = y / (CGFloat) tan(a);
+        x = y / tan(a);
     } else {
         x = f.size.width / 2;
-        y =  x *  (CGFloat) tan(a);
+        y =  x * tan(a);
     }
 
-    res = CGPointMake(f.size.width / 2 + x, y);
+    res = CGPointMake((CGFloat) (f.size.width / 2 + x), (CGFloat) (f.size.height / 2 - y));
 
     while (quarter != 0) {
-        [self decreaseQuarterOfPoint:&res inFrame:&f];
+        [self increaseQuarterOfPoint:&res inFrame:&f];
         quarter --;
     }
 
@@ -108,11 +119,12 @@
     return YES;
 }
 
-- (BOOL)increaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame {
+- (BOOL)increaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame {
     if ([self defineQuarterOfAngle:(*angle) inFrame:(*frame)] == 3) {
         return NO;
     }
     *angle += M_PI_2;
+    *frame = CGRectMake(0.f, 0.f, (*frame).size.height, (*frame).size.width);
     return YES;
 }
 
@@ -127,11 +139,12 @@
     return YES;
 }
 
-- (BOOL)decreaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame {
+- (BOOL)decreaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame {
     if ([self defineQuarterOfAngle:(*angle) inFrame:(*frame)] == 0) {
         return NO;
     }
     *angle -= M_PI_2;
+    *frame = CGRectMake(0.f, 0.f, (*frame).size.height, (*frame).size.width);
     return YES;
 }
 
@@ -152,7 +165,7 @@
     }
 }
 
-- (NSUInteger)defineQuarterOfAngle:(CGFloat)angle inFrame:(CGRect)frame {
+- (NSUInteger)defineQuarterOfAngle:(double)angle inFrame:(CGRect)frame {
     if (angle >= 0.f && angle < M_PI_2) {
         return 0;
     } else if (angle >= M_PI_2 && angle < M_PI) {
