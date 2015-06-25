@@ -35,7 +35,7 @@
 -(void) testRotation_FromLeftTopCornerToRightTopCorner {
     //given
     CGPoint point = CGPointMake(0.f, 0.f);
-    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
+    double angleBetweenCellsTop = atan(1.5/2);
     CGPoint res;
 
     //when
@@ -49,7 +49,7 @@
 -(void) testRotation_FromLeftTopCornerToTopSideCenter {
     //given
     CGPoint point = CGPointMake(0.f, 0.f);
-    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
+    double angleBetweenCellsTop = atan(1.5/2);
     CGPoint res;
 
     //when
@@ -63,8 +63,8 @@
 -(void) testRotation_FromLeftTopCornerToLeftBotCorner {
     //given
     CGPoint point = CGPointMake(0.f, 0.f);
-    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
-    CGFloat angleBetweenCellsBot = (CGFloat) ((M_PI - 2*angleBetweenCellsTop) / 2);
+    double angleBetweenCellsTop = atan(1.5/2);
+    double angleBetweenCellsBot = ((M_PI - 2*angleBetweenCellsTop) / 2);
     CGPoint res;
 
     //when
@@ -78,8 +78,8 @@
 -(void) testRotation_FromLeftTopCornerToLeftSideCenter {
     //given
     CGPoint point = CGPointMake(0.f, 0.f);
-    CGFloat angleBetweenCellsTop = (CGFloat) atan(1.5/2);
-    CGFloat angleBetweenCellsBot = (CGFloat) ((M_PI - 2*angleBetweenCellsTop) / 2);
+    double angleBetweenCellsTop = atan(1.5/2);
+    double angleBetweenCellsBot = (M_PI - 2*angleBetweenCellsTop) / 2;
     CGPoint res;
 
     //when

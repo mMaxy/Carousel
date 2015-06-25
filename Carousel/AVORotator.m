@@ -91,9 +91,12 @@
     if (a > corner) {
         y = f.size.height / 2;
         x = y / tan(a);
-    } else {
+    } else if (a < corner) {
         x = f.size.width / 2;
         y =  x * tan(a);
+    } else {
+        x = f.size.width / 2;
+        y = f.size.height / 2;
     }
 
     res = CGPointMake((CGFloat) (f.size.width / 2 + x), (CGFloat) (f.size.height / 2 - y));
