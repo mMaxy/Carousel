@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2284C1B51B3BF3D600187396 /* AVORotatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2284C1B41B3BF3D600187396 /* AVORotatorTests.m */; };
 		228B8B8C1B35CE3800D0FCD0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8B8B1B35CE3800D0FCD0 /* main.m */; };
 		228B8B8F1B35CE3800D0FCD0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8B8E1B35CE3800D0FCD0 /* AppDelegate.m */; };
 		228B8B951B35CE3800D0FCD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B931B35CE3800D0FCD0 /* Main.storyboard */; };
@@ -18,6 +19,7 @@
 		22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */; };
 		22FE30461B381E9300AA33A3 /* AVOSizeCalculatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */; };
 		22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30471B3843DA00AA33A3 /* AVOPathTests.m */; };
+		ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4FED23B96E4152ACBC086 /* AVORotator.m */; };
 		ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */; };
 		ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */; };
 /* End PBXBuildFile section */
@@ -33,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2284C1B41B3BF3D600187396 /* AVORotatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVORotatorTests.m; sourceTree = "<group>"; };
 		228B8B861B35CE3800D0FCD0 /* Carousel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Carousel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B8B8A1B35CE3800D0FCD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228B8B8B1B35CE3800D0FCD0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -56,6 +59,8 @@
 		ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOPath.m; sourceTree = "<group>"; };
 		ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSizeCalculator.m; sourceTree = "<group>"; };
 		ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOSizeCalculator.h; sourceTree = "<group>"; };
+		ABD4FED23B96E4152ACBC086 /* AVORotator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVORotator.m; sourceTree = "<group>"; };
+		ABD4FF60828368AAB8068A1B /* AVORotator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVORotator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +118,8 @@
 				ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */,
 				ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */,
 				ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */,
+				ABD4FED23B96E4152ACBC086 /* AVORotator.m */,
+				ABD4FF60828368AAB8068A1B /* AVORotator.h */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -133,6 +140,7 @@
 				228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */,
 				22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */,
 				22FE30471B3843DA00AA33A3 /* AVOPathTests.m */,
+				2284C1B41B3BF3D600187396 /* AVORotatorTests.m */,
 			);
 			path = CarouselTests;
 			sourceTree = "<group>";
@@ -252,6 +260,7 @@
 				228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */,
 				ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */,
 				ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */,
+				ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2284C1B51B3BF3D600187396 /* AVORotatorTests.m in Sources */,
 				228B8BA61B35CE3800D0FCD0 /* CarouselTests.m in Sources */,
 				22FE30461B381E9300AA33A3 /* AVOSizeCalculatorTests.m in Sources */,
 				22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */,

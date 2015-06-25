@@ -20,23 +20,6 @@
 
 static NSString * const reuseIdentifier = @"CarouselCell";
 
-- (id)init {
-    self = [super init];
-    if (self) {
-//        [self setDefaults];
-//        [self addObserver:self forKeyPath:kLXCollectionViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-//        [self setDefaults];
-//        [self addObserver:self forKeyPath:kLXCollectionViewKeyPath options:NSKeyValueObservingOptionNew context:nil];
-    }
-    return self;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -48,6 +31,12 @@ static NSString * const reuseIdentifier = @"CarouselCell";
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    AVOCollectionViewLayout *layout = (AVOCollectionViewLayout *) self.collectionView.collectionViewLayout;
+    [layout invalidateLayout];
+    [self.collectionView performBatchUpdates:nil completion:nil];
 }
 
 #pragma mark <UICollectionViewDataSource>
@@ -64,6 +53,21 @@ static NSString * const reuseIdentifier = @"CarouselCell";
     [cell.textLabel setText:[NSString stringWithFormat:@"%i", (indexPath.item + 1)]];
 
     return cell;
+}
+
+
+#pragma mark - <AVOCollectionViewDelegateLayout>
+
+- (void)collectionView:(UICollectionView *)collectionView tapOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"Tap #%i", indexPath.item);
+}
+
+- (void)collectionView:(UICollectionView *)collectionView longpressOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"Longpress start #%i", indexPath.item);
+}
+
+- (void)collectionView:(UICollectionView *)collectionView liftOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"End Longpress #%i", indexPath.item);
 }
 
 @end
