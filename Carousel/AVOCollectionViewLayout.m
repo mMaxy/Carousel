@@ -59,7 +59,7 @@
 
     _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
 
-    _cellsOffset = M_PI_2;//0.f;
+    _cellsOffset = 0.f;
     _acceleration = 0.f;
     _velocity = 0.f;
 
@@ -88,7 +88,54 @@
 #pragma mark Tap Handlers
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
+    switch (gestureRecognizer.state) {
+        case UIGestureRecognizerStateBegan:
+        case UIGestureRecognizerStateChanged: {
+            CGPoint translation = [gestureRecognizer translationInView:self.collectionView];
+            CGPoint point = [gestureRecognizer locationInView:self.collectionView];
 
+            CGFloat x = point.x - self.sizeCalculator.horizontalInset;
+            CGFloat y = point.y - self.sizeCalculator.verticalInset;
+            point = CGPointMake(x, y);
+            NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
+            if (indexPath == nil || indexPath.item == 8) {
+                return;
+            }
+
+            CGPoint centerBefore = [self.path getCenterForIndexPath:indexPath];
+            centerBefore.x -= translation.x;
+            centerBefore.y -= translation.y;
+            centerBefore.x = centerBefore.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
+            centerBefore.y = centerBefore.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
+            centerBefore.y *= 1/self.railsHeightToWidthRelation;
+
+            CGPoint centerAfter = [self.path getCenterForIndexPath:indexPath];
+
+            centerAfter.x = centerAfter.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
+            centerAfter.y = centerAfter.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
+            centerAfter.y *= 1/self.railsHeightToWidthRelation;
+
+            double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.rails];
+            double endAngle = [self.rotator getAngleFromPoint:centerAfter onFrame:self.rails];
+
+            self.cellsOffset += endAngle-startAngle;
+
+            [self invalidateLayout];
+        } break;
+        case UIGestureRecognizerStateCancelled:
+
+        case UIGestureRecognizerStateEnded: {
+//            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
+//
+//            if (velocity.x != 0 && velocity.y != 0) {
+//
+//                self.velocity = velocity;
+//            }
+        } break;
+        default: {
+            // Do nothing...
+        } break;
+    }
 }
 
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {

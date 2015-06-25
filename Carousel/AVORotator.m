@@ -19,9 +19,6 @@
 -(NSUInteger) defineQuarterForPoint:(CGPoint) point inFrame:(CGRect)frame;
 -(NSUInteger) defineQuarterOfAngle:(double) angle inFrame:(CGRect)frame;
 
--(double) getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
--(CGPoint) getPointForAngle:(double)angle onFrame:(CGRect)frame;
-
 @end
 
 @implementation AVORotator {
@@ -45,8 +42,6 @@
 
     return result;
 }
-
-#pragma mark Private Methods
 
 - (double)getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame {
     double res;
