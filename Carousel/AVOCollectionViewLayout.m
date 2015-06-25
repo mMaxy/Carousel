@@ -108,7 +108,7 @@
     CGFloat newX = (*center).x;
     CGFloat newY = (*center).y;
     CGFloat remain = self.cellsOffset;
-
+    //TODO rework with offset
     while (remain > 0.f) {
         CGPoint direction = [self getPossibleDirectionFromPoint:CGPointMake(newX, newY)];
         newX += direction.x * remain;
@@ -138,9 +138,6 @@
 }
 
 - (CGPoint)getPossibleDirectionFromPoint:(CGPoint)point {
-    CGFloat x;
-    CGFloat y;
-
     BOOL leftTopCorner  = point.x == self.railXMin && point.y == self.railYMin;
     BOOL rightTopCorner = point.x == self.railXMax && point.y == self.railYMin;
     BOOL leftBotCorner  = point.x == self.railXMin && point.y == self.railYMax;
