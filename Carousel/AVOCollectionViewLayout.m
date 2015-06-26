@@ -36,13 +36,14 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 @property (strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
 @property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 
+@property(nonatomic) AVOSpinDirection spinDirection;
+
+@property(assign, nonatomic) double lastChange;
+@property(assign, nonatomic) double lastFrame;
+
 @end
 
-@implementation AVOCollectionViewLayout {
-    double _lastChange;
-    AVOSpinDirection _spinDirection;
-    double _lastFrame;
-}
+@implementation AVOCollectionViewLayout
 
 @synthesize sizeCalculator = _sizeCalculator;
 @synthesize path = _path;
@@ -73,8 +74,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     _acceleration = 0.f;
     _velocity = 0.f;
 
-    [self setupScrollTimer];
-
     [self setupTouches];
 }
 
@@ -98,7 +97,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 #pragma mark Tap Handlers
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
-
     CGPoint translation = [gestureRecognizer translationInView:self.collectionView];
     CGPoint point = [gestureRecognizer locationInView:self.collectionView];
 
@@ -118,9 +116,10 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
+            [self setupScrollTimer];
             self.whilePanCellOffset = self.cellsOffset;
         case UIGestureRecognizerStateChanged: {
-            _lastChange = CFAbsoluteTimeGetCurrent();
+            self.lastChange = CFAbsoluteTimeGetCurrent();
 
             if (startAngle > endAngle) {
                 _spinDirection = AVOSpinCounterClockwise;
@@ -147,10 +146,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
             self.whilePanCellOffset = self.cellsOffset;
 
             double curTime = CFAbsoluteTimeGetCurrent();
-            double timeElapsed = curTime - _lastChange;
-
-            CGFloat x;
-            CGFloat y;
+            double timeElapsed = curTime - self.lastChange;
 
             CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
 
@@ -158,46 +154,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
                 //There was no spin before, don't scroll
                 return;
             }
-
-            // getting sum of vectors (from frame center to pan ended location with velocity)
-//            if (point.y > self.collectionView.frame.size.height)
-            velocity.y *= -1;
-            x = point.x + velocity.x;
-            y = point.y + velocity.y;
-            CGPoint delta = CGPointMake(x, y);
-
-            // spin sum vector on offset
-            [self moveCenter:&delta byAngle:self.cellsOffset];
-
-            // real velocity is difference between moved sum vector and offset vector
-            x = delta.x - ((CGFloat) cos(self.cellsOffset)) * self.rails.size.width/2;
-            y = delta.y - ((CGFloat) sin(self.cellsOffset)) * self.rails.size.height/2;
-
-            // setting real velocity vector
-            velocity.x = x;
-            velocity.y = y;
-
-            //spin velocity vector to be like there is no offset
-            // It allows us understand are moving going clockwise or not
-            x = (CGFloat) (velocity.x * cos(-self.cellsOffset) + velocity.y * sin(-self.cellsOffset));
-            y = (CGFloat) (velocity.y * cos(-self.cellsOffset) - velocity.x * sin(-self.cellsOffset));
-            velocity.x = (CGFloat) x;
-            velocity.y = (CGFloat) y;
-
-            CGFloat distVelocity = velocity.y;
-            //normalized
-            distVelocity *= 1/self.railsHeightToWidthRelation;
-            CGFloat railsPerimeter = self.rails.size.width*2 + self.rails.size.height*2;
-            CGFloat velocityAsPartOfPerimeter = distVelocity / (railsPerimeter);
-            //counting angle velocity. It goes in opposite direction than velocity vector
-            CGFloat angleVelocity = (CGFloat) (2 * M_PI * velocityAsPartOfPerimeter);
-
-            if (angleVelocity > 0 && _spinDirection == AVOSpinCounterClockwise) {
-                angleVelocity *= -1;
-            }
-            if (angleVelocity < 0 && _spinDirection == AVOSpinClockwise){
-                angleVelocity *= -1;
-            }
+            CGFloat angleVelocity = [self getAngleVelocityFromPoint:point withVectorVelocity:velocity];
 
             if ( timeElapsed < 0.2 ) {
                 //set velocity to self
@@ -207,8 +164,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
                 // there was no scroll
                 self.velocity = 0.f;
                 self.acceleration = 0.f;
+                [self invalidatesScrollTimer];
                 [self moveCellsToPlace];
-//                self.whilePanCellOffset = self.cellsOffset;
             }
 
             _spinDirection = AVOSpinNone;
@@ -242,6 +199,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 - (void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
     self.velocity = 0.f;
     self.acceleration = 0.f;
+    [self invalidatesScrollTimer];
     [self moveCellsToPlace];
     CGPoint point = [gestureRecognizer locationInView:self.collectionView];
     NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
@@ -251,8 +209,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 - (void) handleTimer {
     double curTime = CFAbsoluteTimeGetCurrent();
-    double timeElapsed = curTime - _lastFrame;
-    _lastFrame = curTime;
+    double timeElapsed = curTime - self.lastFrame;
+    self.lastFrame = curTime;
 
 
     _cellsOffset += _velocity * (timeElapsed);
@@ -268,7 +226,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         _velocity = 0.f;
         _acceleration = 0.f;
         self.whilePanCellOffset = _cellsOffset;
-       [self moveCellsToPlace];
+        [self setupScrollTimer];
+        [self moveCellsToPlace];
     }
     if (_velocity != 0)
         _velocity -= fabs(_velocity)/_velocity *_acceleration * (timeElapsed);
@@ -304,12 +263,14 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     }
 
     double delta = moveToAngle - current;
-    double acceleration = 0.5f;
+    double acceleration = 0.7f;
     double velocity = sqrt(2*acceleration*acceleration*fabs(delta));
-    velocity *= fabs(delta)/delta;
 
-    self.velocity = velocity;
-    self.acceleration = acceleration;
+    if (velocity > 0) [self setupScrollTimer];
+
+    velocity *= fabs(delta)/delta;
+    self.velocity = (CGFloat) velocity;
+    self.acceleration = (CGFloat) acceleration;
 
 }
 
@@ -425,6 +386,51 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     }
     indexPath = [self.path getCellIndexWithPoint:point];
     return indexPath;
+}
+
+- (CGFloat)getAngleVelocityFromPoint:(CGPoint)point withVectorVelocity:(CGPoint)velocity {
+    CGFloat x;
+    CGFloat y;
+    // getting sum of vectors (from frame center to pan ended location with velocity)
+    //if (point.y > self.collectionView.frame.size.height)
+    velocity.y *= -1;
+    x = point.x + velocity.x;
+    y = point.y + velocity.y;
+    CGPoint delta = CGPointMake(x, y);
+
+    // spin sum vector on offset
+    [self moveCenter:&delta byAngle:self.cellsOffset];
+
+    // real velocity is difference between moved sum vector and offset vector
+    x = delta.x - ((CGFloat) cos(self.cellsOffset)) * self.rails.size.width/2;
+    y = delta.y - ((CGFloat) sin(self.cellsOffset)) * self.rails.size.height/2;
+
+    // setting real velocity vector
+    velocity.x = x;
+    velocity.y = y;
+
+    //spin velocity vector to be like there is no offset
+    // It allows us understand are moving going clockwise or not
+    x = (CGFloat) (velocity.x * cos(-self.cellsOffset) + velocity.y * sin(-self.cellsOffset));
+    y = (CGFloat) (velocity.y * cos(-self.cellsOffset) - velocity.x * sin(-self.cellsOffset));
+    velocity.x = (CGFloat) x;
+    velocity.y = (CGFloat) y;
+
+    CGFloat distVelocity = velocity.y;
+    //normalized
+    distVelocity *= 1/ self.railsHeightToWidthRelation;
+    CGFloat railsPerimeter = self.rails.size.width*2 + self.rails.size.height*2;
+    CGFloat velocityAsPartOfPerimeter = distVelocity / (railsPerimeter);
+    //counting angle velocity. It goes in opposite direction than velocity vector
+    CGFloat angleVelocity = (CGFloat) (2 * M_PI * velocityAsPartOfPerimeter);
+
+    if (angleVelocity > 0 && _spinDirection == AVOSpinCounterClockwise) {
+        angleVelocity *= -1;
+    }
+    if (angleVelocity < 0 && _spinDirection == AVOSpinClockwise){
+        angleVelocity *= -1;
+    }
+    return angleVelocity;
 }
 
 #pragma mark Getters and Setters

@@ -20,5 +20,4 @@
 @interface AVOCollectionViewLayout : UICollectionViewLayout
 
 @property (assign, nonatomic, readonly) id<AVOCollectionViewDelegateLayout> delegate;
-
 @end
