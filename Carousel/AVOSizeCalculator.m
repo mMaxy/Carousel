@@ -58,7 +58,7 @@
     res.xRightCellLeftBorder = res.xCenterCellRightBorder + self.spaceBetweenCells;
     res.xRightCellRightBorder = res.xRightCellLeftBorder + self.cellSize.width;
 
-    res.yTopCellTopBorder = self.horizontalInset;
+    res.yTopCellTopBorder = self.verticalInset;
     res.yTopCellBotBorder = res.yTopCellTopBorder + self.cellSize.height;
     res.yCenterCellTopBorder = res.yTopCellBotBorder + self.spaceBetweenCells;
     res.yCenterCellBotBorder = res.yCenterCellTopBorder + self.cellSize.height;
