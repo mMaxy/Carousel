@@ -41,6 +41,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 @property(assign, nonatomic) double lastChange;
 @property(assign, nonatomic) double lastFrame;
 
+@property(assign, nonatomic) double panStartTime;
+
 @end
 
 @implementation AVOCollectionViewLayout
@@ -111,6 +113,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         endAngle -= 2 * M_PI;
     }
 
+    double deltaAngle = endAngle - startAngle;
+
     self.velocity = 0.f;
     self.acceleration = 0.f;
 
@@ -118,6 +122,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         case UIGestureRecognizerStateBegan:
             [self setupScrollTimer];
             self.whilePanCellOffset = self.cellsOffset;
+            self.panStartTime = CFAbsoluteTimeGetCurrent();
         case UIGestureRecognizerStateChanged: {
             self.lastChange = CFAbsoluteTimeGetCurrent();
 
@@ -134,7 +139,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
                 return;
             }
 
-            self.cellsOffset = self.whilePanCellOffset + (CGFloat) (endAngle-startAngle);
+            self.cellsOffset = self.whilePanCellOffset + (CGFloat) (deltaAngle);
             if (self.cellsOffset > 2*M_PI)
                 self.cellsOffset -= 2*M_PI;
             if (self.cellsOffset < 0.f)
@@ -147,19 +152,20 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
             double curTime = CFAbsoluteTimeGetCurrent();
             double timeElapsed = curTime - self.lastChange;
-
-            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
+            double deltaTime = curTime - self.panStartTime;
 
             if (_spinDirection == AVOSpinNone){
                 //There was no spin before, don't scroll
                 return;
             }
-            CGFloat angleVelocity = [self getAngleVelocityFromPoint:point withVectorVelocity:velocity];
+//            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
+//            CGFloat angleVelocity = [self getAngleVelocityFromPoint:point withVectorVelocity:velocity];
+            double angleVelocity = deltaAngle / deltaTime;
 
             if ( timeElapsed < 0.2 ) {
                 //set velocity to self
                 self.velocity = angleVelocity;
-                self.acceleration = 0.5f ;
+                self.acceleration = 1.5f ;
             } else {
                 // there was no scroll
                 self.velocity = 0.f;
