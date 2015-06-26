@@ -207,7 +207,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
                 // there was no scroll
                 self.velocity = 0.f;
                 self.acceleration = 0.f;
-                self.whilePanCellOffset = self.cellsOffset;
+                [self moveCellsToPlace];
+//                self.whilePanCellOffset = self.cellsOffset;
             }
 
             _spinDirection = AVOSpinNone;
@@ -221,9 +222,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)gestureRecognizer {
     switch(gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
-            self.velocity = 0.f;
-            self.acceleration = 0.f;
-            self.whilePanCellOffset = self.cellsOffset;
             CGPoint point = [gestureRecognizer locationInView:self.collectionView];
             NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
             [self.delegate collectionView:self.collectionView
@@ -244,7 +242,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 - (void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
     self.velocity = 0.f;
     self.acceleration = 0.f;
-
+    [self moveCellsToPlace];
     CGPoint point = [gestureRecognizer locationInView:self.collectionView];
     NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
     [self.delegate collectionView:self.collectionView
@@ -269,12 +267,49 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     if (fabs(_velocity) < fabs(_acceleration * (timeElapsed))) {
         _velocity = 0.f;
         _acceleration = 0.f;
-        _whilePanCellOffset = _cellsOffset;
+        self.whilePanCellOffset = _cellsOffset;
+       [self moveCellsToPlace];
     }
     if (_velocity != 0)
         _velocity -= fabs(_velocity)/_velocity *_acceleration * (timeElapsed);
 
     [super invalidateLayout];
+
+}
+
+-(void) moveCellsToPlace {
+    double moveToAngle;
+    CGFloat current = self.cellsOffset;
+    if (current < M_PI_4/2 && current > 0) {
+        moveToAngle = 0;
+    } else if (current < 3 * M_PI_4/2 && current > M_PI_4/2) {
+        moveToAngle = M_PI_4;
+    } else if (current < 5 * M_PI_4/2 && current > 3 * M_PI_4/2) {
+        moveToAngle = M_PI_2;
+    } else if (current < 7 * M_PI_4/2 && current > 5 * M_PI_4/2) {
+        moveToAngle = 3*M_PI_4;
+    } else if (current < 9 * M_PI_4/2 && current > 7 * M_PI_4/2) {
+        moveToAngle = M_PI;
+    } else if (current < 11 * M_PI_4/2 && current > 9 * M_PI_4/2) {
+        moveToAngle = 5*M_PI_4;
+    } else if (current < 13 * M_PI_4/2 && current > 11 * M_PI_4/2) {
+        moveToAngle = 3*M_PI_2;
+    } else if (current < 15 * M_PI_4/2 && current > 13 * M_PI_4/2) {
+        moveToAngle = 7*M_PI_4;
+    } else if (current < 16 * M_PI_4/2 && current > 15 * M_PI_4/2) {
+        moveToAngle = 2*M_PI;
+    } else {
+        //offset is already in place
+        return;
+    }
+
+    double delta = moveToAngle - current;
+    double acceleration = 0.5f;
+    double velocity = sqrt(2*acceleration*acceleration*fabs(delta));
+    velocity *= fabs(delta)/delta;
+
+    self.velocity = velocity;
+    self.acceleration = acceleration;
 
 }
 
