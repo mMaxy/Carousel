@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 @property (assign, nonatomic) CGFloat whilePanCellOffset;
 @property (assign, nonatomic) CGFloat velocity;
 @property (assign, nonatomic) CGFloat acceleration;
-@property (assign, nonatomic, readonly) double maxCellsOffset;
+@property (assign, nonatomic, readonly) CGFloat maxCellsOffset;
 @property (assign, nonatomic, readonly) CGRect rails;
 @property (assign, nonatomic, readonly) CGFloat railsHeightToWidthRelation;
 
@@ -62,7 +62,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     CGFloat railXMin = [self.path getCenterForIndex:0].x;
     CGFloat railXMax = [self.path getCenterForIndex:2].x;
 
-    double offsetMax = M_PI * 2;
+    CGFloat offsetMax = (CGFloat) (M_PI * 2);
     _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
 
     _maxCellsOffset = offsetMax;
@@ -106,18 +106,26 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.collectionView.frame];
     double endAngle = [self.rotator getAngleFromPoint:point onFrame:self.collectionView.frame];
 
+    if (startAngle-endAngle > M_PI_2) {
+        endAngle += 2 * M_PI;
+    }
+    if (endAngle-startAngle > M_PI_2) {
+        endAngle -= 2 * M_PI;
+    }
+
     self.velocity = 0.f;
     self.acceleration = 0.f;
 
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
+            self.whilePanCellOffset = self.cellsOffset;
         case UIGestureRecognizerStateChanged: {
             _lastChange = CFAbsoluteTimeGetCurrent();
 
             if (startAngle > endAngle) {
-                _spinDirection = AVOSpinClockwise;
-            } else if (startAngle < endAngle){
                 _spinDirection = AVOSpinCounterClockwise;
+            } else if (startAngle < endAngle){
+                _spinDirection = AVOSpinClockwise;
             } else {
                 _spinDirection = AVOSpinNone;
             }
@@ -184,20 +192,22 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
             //counting angle velocity. It goes in opposite direction than velocity vector
             CGFloat angleVelocity = (CGFloat) (2 * M_PI * velocityAsPartOfPerimeter);
 
-            if (angleVelocity < 0 && _spinDirection == AVOSpinCounterClockwise) {
+            if (angleVelocity > 0 && _spinDirection == AVOSpinCounterClockwise) {
                 angleVelocity *= -1;
             }
-            if (angleVelocity > 0 && _spinDirection == AVOSpinClockwise){
+            if (angleVelocity < 0 && _spinDirection == AVOSpinClockwise){
                 angleVelocity *= -1;
             }
 
             if ( timeElapsed < 0.2 ) {
                 //set velocity to self
                 self.velocity = angleVelocity;
+//                self.acceleration = (CGFloat) (0.5 * fabsf(angleVelocity)/angleVelocity);
             } else {
                 // there was no scroll
                 self.velocity = 0.f;
                 self.acceleration = 0.f;
+                self.whilePanCellOffset = self.cellsOffset;
             }
 
             _spinDirection = AVOSpinNone;
@@ -213,6 +223,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         case UIGestureRecognizerStateBegan: {
             self.velocity = 0.f;
             self.acceleration = 0.f;
+            self.whilePanCellOffset = self.cellsOffset;
             CGPoint point = [gestureRecognizer locationInView:self.collectionView];
             NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
             [self.delegate collectionView:self.collectionView
@@ -231,6 +242,9 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 }
 
 - (void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
+    self.velocity = 0.f;
+    self.acceleration = 0.f;
+
     CGPoint point = [gestureRecognizer locationInView:self.collectionView];
     NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
     [self.delegate collectionView:self.collectionView
@@ -244,15 +258,22 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 
     _cellsOffset += _velocity * (timeElapsed);
+//    _cellsOffset = M_PI * 3/4;
     if (_cellsOffset >= _maxCellsOffset) {
         _cellsOffset -= _maxCellsOffset;
     }
+    if (_cellsOffset < 0){
+        _cellsOffset = _maxCellsOffset + _cellsOffset;
+    }
 
-    _velocity -= _acceleration * (timeElapsed);
-    if (self.velocity <= 0.005f && self.velocity >= -0.005f ) {
+    if (fabs(self.velocity) < fabs(_acceleration * (timeElapsed))) {
         _velocity = 0.f;
         _acceleration = 0.f;
+        self.whilePanCellOffset = self.cellsOffset;
     }
+
+    _velocity -= _acceleration * (timeElapsed);
+
     [super invalidateLayout];
 
 }
