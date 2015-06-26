@@ -73,8 +73,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     _acceleration = 0.f;
     _velocity = 0.f;
 
-    [self setupScrollTimer];
-
     [self setupTouches];
 }
 
@@ -98,7 +96,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 #pragma mark Tap Handlers
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)gestureRecognizer {
-
     CGPoint translation = [gestureRecognizer translationInView:self.collectionView];
     CGPoint point = [gestureRecognizer locationInView:self.collectionView];
 
@@ -118,6 +115,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
+            [self setupScrollTimer];
             self.whilePanCellOffset = self.cellsOffset;
         case UIGestureRecognizerStateChanged: {
             _lastChange = CFAbsoluteTimeGetCurrent();
@@ -207,8 +205,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
                 // there was no scroll
                 self.velocity = 0.f;
                 self.acceleration = 0.f;
+                [self invalidatesScrollTimer];
                 [self moveCellsToPlace];
-//                self.whilePanCellOffset = self.cellsOffset;
             }
 
             _spinDirection = AVOSpinNone;
@@ -242,6 +240,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 - (void)handleTapGesture:(UITapGestureRecognizer *)gestureRecognizer {
     self.velocity = 0.f;
     self.acceleration = 0.f;
+    [self invalidatesScrollTimer];
     [self moveCellsToPlace];
     CGPoint point = [gestureRecognizer locationInView:self.collectionView];
     NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
@@ -268,7 +267,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         _velocity = 0.f;
         _acceleration = 0.f;
         self.whilePanCellOffset = _cellsOffset;
-       [self moveCellsToPlace];
+        [self setupScrollTimer];
+        [self moveCellsToPlace];
     }
     if (_velocity != 0)
         _velocity -= fabs(_velocity)/_velocity *_acceleration * (timeElapsed);
@@ -304,12 +304,14 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     }
 
     double delta = moveToAngle - current;
-    double acceleration = 0.5f;
+    double acceleration = 0.7f;
     double velocity = sqrt(2*acceleration*acceleration*fabs(delta));
-    velocity *= fabs(delta)/delta;
 
-    self.velocity = velocity;
-    self.acceleration = acceleration;
+    if (velocity > 0) [self setupScrollTimer];
+
+    velocity *= fabs(delta)/delta;
+    self.velocity = (CGFloat) velocity;
+    self.acceleration = (CGFloat) acceleration;
 
 }
 
