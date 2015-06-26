@@ -11,6 +11,12 @@
 #import "AVOPath.h"
 #import "AVORotator.h"
 
+typedef NS_ENUM(NSInteger, AVOSpinDirection) {
+    AVOSpinNone = 0,
+    AVOSpinClockwise,
+    AVOSpinCounterClockwise
+};
+
 @interface AVOCollectionViewLayout () <UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic, readonly) AVOSizeCalculator *sizeCalculator;
@@ -34,6 +40,8 @@
 
 @implementation AVOCollectionViewLayout {
     double _lastChange;
+    AVOSpinDirection _spinDirection;
+    double _lastFrame;
 }
 
 @synthesize sizeCalculator = _sizeCalculator;
@@ -98,17 +106,22 @@
     double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.collectionView.frame];
     double endAngle = [self.rotator getAngleFromPoint:point onFrame:self.collectionView.frame];
 
+    self.velocity = 0.f;
+    self.acceleration = 0.f;
+
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged: {
-            self.velocity = 0.f;
-            self.acceleration = 0.f;
-
             _lastChange = CFAbsoluteTimeGetCurrent();
-            
-            CGFloat x = point.x - self.sizeCalculator.horizontalInset;
-            CGFloat y = point.y - self.sizeCalculator.verticalInset;
-            point = CGPointMake(x, y);
+
+            if (startAngle > endAngle) {
+                _spinDirection = AVOSpinClockwise;
+            } else if (startAngle < endAngle){
+                _spinDirection = AVOSpinCounterClockwise;
+            } else {
+                _spinDirection = AVOSpinNone;
+            }
+
             NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
             if (indexPath == nil || indexPath.item == 8) {
                 return;
@@ -125,39 +138,69 @@
         case UIGestureRecognizerStateEnded: {
             self.whilePanCellOffset = self.cellsOffset;
 
+            double curTime = CFAbsoluteTimeGetCurrent();
+            double timeElapsed = curTime - _lastChange;
+
+            CGFloat x;
+            CGFloat y;
+
             CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
 
-            double x = velocity.x * cos(self.cellsOffset) + velocity.y * sin(self.cellsOffset);
-            double y = velocity.y * cos(self.cellsOffset) - velocity.x * sin(self.cellsOffset);
+            if (_spinDirection == AVOSpinNone){
+                //There was no spin before, don't scroll
+                return;
+            }
+
+            // getting sum of vectors (from frame center to pan ended location with velocity)
+//            if (point.y > self.collectionView.frame.size.height)
+            velocity.y *= -1;
+            x = point.x + velocity.x;
+            y = point.y + velocity.y;
+            CGPoint delta = CGPointMake(x, y);
+
+            // spin sum vector on offset
+            [self moveCenter:&delta byAngle:self.cellsOffset];
+
+            // real velocity is difference between moved sum vector and offset vector
+            x = delta.x - ((CGFloat) cos(self.cellsOffset)) * self.rails.size.width/2;
+            y = delta.y - ((CGFloat) sin(self.cellsOffset)) * self.rails.size.height/2;
+
+            // setting real velocity vector
+            velocity.x = x;
+            velocity.y = y;
+
+            //spin velocity vector to be like there is no offset
+            // It allows us understand are moving going clockwise or not
+            x = (CGFloat) (velocity.x * cos(-self.cellsOffset) + velocity.y * sin(-self.cellsOffset));
+            y = (CGFloat) (velocity.y * cos(-self.cellsOffset) - velocity.x * sin(-self.cellsOffset));
             velocity.x = (CGFloat) x;
             velocity.y = (CGFloat) y;
 
-            CGFloat modVel = (CGFloat) sqrt(velocity.x*velocity.x + velocity.y*velocity.y) / 100000;
+            CGFloat distVelocity = velocity.y;
+            //normilized
+            distVelocity *= 1/self.railsHeightToWidthRelation;
+            CGFloat railsPerimeter = self.rails.size.width*2 + self.rails.size.height*2;
+            CGFloat velocityAsPartOfPerimeter = distVelocity / (railsPerimeter);
+            //counting angle velocity. It goes in opposite direction than velocity vector
+            CGFloat angleVelocity = (CGFloat) (2 * M_PI * velocityAsPartOfPerimeter);
 
-            double relationalVelocity = modVel / M_PI_4;
-            
+            if (angleVelocity < 0 && _spinDirection == AVOSpinCounterClockwise) {
+                angleVelocity *= -1;
+            }
+            if (angleVelocity > 0 && _spinDirection == AVOSpinClockwise){
+                angleVelocity *= -1;
+            }
 
-            double curTime = CFAbsoluteTimeGetCurrent();
-            double timeElapsed = curTime - _lastChange;
-            if ( timeElapsed < 0.1 )
-                self.velocity = (CGFloat) relationalVelocity;
-            else
-                self.velocity = 0.f;
-            
-            if (modVel)
-            if (velocity.y > 0) {
-                //clockwise
-                self.velocity *= -1;
-                self.acceleration = (self.velocity / 100 );
-            } else if (velocity.y < 0) {
-                //counter clockwise
-
-                self.acceleration = (self.velocity / 100 );
+            if ( timeElapsed < 0.2 ) {
+                //set velocity to self
+                self.velocity = angleVelocity;
             } else {
-                //don't move
+                // there was no scroll
+                self.velocity = 0.f;
                 self.acceleration = 0.f;
             }
 
+            _spinDirection = AVOSpinNone;
         } break;
         default: {
             // Do nothing...
@@ -195,12 +238,17 @@
 }
 
 - (void) handleTimer {
-    _cellsOffset += _velocity;
+    double curTime = CFAbsoluteTimeGetCurrent();
+    double timeElapsed = curTime - _lastFrame;
+    _lastFrame = curTime;
+
+
+    _cellsOffset += _velocity * (timeElapsed);
     if (_cellsOffset >= _maxCellsOffset) {
         _cellsOffset -= _maxCellsOffset;
     }
 
-    _velocity -= _acceleration;
+    _velocity -= _acceleration * (timeElapsed);
     if (self.velocity <= 0.005f && self.velocity >= -0.005f ) {
         _velocity = 0.f;
         _acceleration = 0.f;
@@ -313,19 +361,12 @@
 }
 
 - (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point {
-    CGFloat x = point.x - self.sizeCalculator.horizontalInset;
-    CGFloat y = point.y - self.sizeCalculator.verticalInset;
-    point = CGPointMake(x, y);
     NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
-    point.x += self.sizeCalculator.horizontalInset;
-    point.y += self.sizeCalculator.verticalInset;
     if (indexPath.item != 8) {
         point = [self.path getCenterForIndexPath:indexPath];
 
         [self moveCenter:&point byAngle:-self.cellsOffset];
     }
-    point.x -= self.sizeCalculator.horizontalInset;
-    point.y -= self.sizeCalculator.verticalInset;
     indexPath = [self.path getCellIndexWithPoint:point];
     return indexPath;
 }
@@ -352,19 +393,6 @@
         [self calculateDefaults];
     }
     return _sizeCalculator;
-}
-
--(NSArray *) fixedAngles {
-    return @[
-            @(0), //0
-            @(M_PI_4), //45
-            @(M_PI_2), //90
-            @(M_PI_2 + M_PI_4), //135
-            @(2 * M_PI), //180
-            @(2*M_PI + M_PI_4), //225
-            @(2*M_PI + M_PI_2), //270
-            @(2*M_PI + M_PI_2 + M_PI_4), //315
-    ];
 }
 
 - (id<AVOCollectionViewDelegateLayout>)delegate {
