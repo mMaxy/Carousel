@@ -185,7 +185,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
             velocity.y = (CGFloat) y;
 
             CGFloat distVelocity = velocity.y;
-            //normilized
+            //normalized
             distVelocity *= 1/self.railsHeightToWidthRelation;
             CGFloat railsPerimeter = self.rails.size.width*2 + self.rails.size.height*2;
             CGFloat velocityAsPartOfPerimeter = distVelocity / (railsPerimeter);
@@ -202,7 +202,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
             if ( timeElapsed < 0.2 ) {
                 //set velocity to self
                 self.velocity = angleVelocity;
-//                self.acceleration = (CGFloat) (0.5 * fabsf(angleVelocity)/angleVelocity);
+                self.acceleration = 0.5f ;
             } else {
                 // there was no scroll
                 self.velocity = 0.f;
@@ -258,7 +258,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 
     _cellsOffset += _velocity * (timeElapsed);
-//    _cellsOffset = M_PI * 3/4;
+
     if (_cellsOffset >= _maxCellsOffset) {
         _cellsOffset -= _maxCellsOffset;
     }
@@ -266,13 +266,13 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         _cellsOffset = _maxCellsOffset + _cellsOffset;
     }
 
-    if (fabs(self.velocity) < fabs(_acceleration * (timeElapsed))) {
+    if (fabs(_velocity) < fabs(_acceleration * (timeElapsed))) {
         _velocity = 0.f;
         _acceleration = 0.f;
-        self.whilePanCellOffset = self.cellsOffset;
+        _whilePanCellOffset = _cellsOffset;
     }
-
-    _velocity -= _acceleration * (timeElapsed);
+    if (_velocity != 0)
+        _velocity -= fabs(_velocity)/_velocity *_acceleration * (timeElapsed);
 
     [super invalidateLayout];
 
