@@ -10,6 +10,7 @@
 #import "POPAnimation.h"
 #import "POPAnimatableProperty.h"
 #import "POPDecayAnimation.h"
+#import "POPSpringAnimation.h"
 
 typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     AVOSpinNone = 0,
@@ -99,7 +100,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
     _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
 
-    _cellsOffset = 1.f;
+    _cellsOffset = 0.f;
     _acceleration = 0.f;
     _velocity = 0.f;
 
@@ -172,6 +173,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         case UIGestureRecognizerStateEnded: {
             self.startOffset = self.cellsOffset;
 
+            [self moveCellsToPlace];
 //            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
 //            CGFloat angleVelocity = [self getAngleVelocityFromPoint:point withVectorVelocity:velocity];
 //            double angleVelocity = deltaAngle / deltaTime;
@@ -215,11 +217,26 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
            tapOnCellAtIndexPath:indexPath];
 
     //TODO: test, remove it
-    POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
-    decayAnimation.property = [self boundsOriginProperty];
-    decayAnimation.velocity = @(self.cellsOffset + 1.f);
-    [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
-//    self.cellsOffset += 1.f;
+
+    [self moveCellsToPlace];
+//    [self animateScrollToOffset:(self.cellsOffset + 1.f)];
+    //    self.cellsOffset += 1.f;
+}
+
+- (void)animateScrollToOffset:(CGFloat)offset {
+    NSLog(@"%f", offset);
+//    POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
+//    decayAnimation.property = [self boundsOriginProperty];
+//    decayAnimation.velocity = @(offset);
+//    [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
+
+    POPSpringAnimation *springAnimation = [POPSpringAnimation animation];
+    springAnimation.property = [self boundsOriginProperty];
+    springAnimation.velocity = @(0.3f);
+    springAnimation.toValue = @(offset);
+    springAnimation.springBounciness = 0.0;
+    springAnimation.springSpeed = 5.0;
+    [self pop_addAnimation:springAnimation forKey:@"bounce"];
 }
 
 //TODO: move to path(or somewhere else)
@@ -303,41 +320,33 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 //TODO: decide, what to do with this method
 -(void) moveCellsToPlace {
-    double moveToAngle;
+    CGFloat moveToAngle;
     CGFloat current = self.cellsOffset;
     if (current < M_PI_4/2 && current > 0) {
         moveToAngle = 0;
     } else if (current < 3 * M_PI_4/2 && current > M_PI_4/2) {
-        moveToAngle = M_PI_4;
+        moveToAngle = (CGFloat) M_PI_4;
     } else if (current < 5 * M_PI_4/2 && current > 3 * M_PI_4/2) {
-        moveToAngle = M_PI_2;
+        moveToAngle = (CGFloat) M_PI_2;
     } else if (current < 7 * M_PI_4/2 && current > 5 * M_PI_4/2) {
-        moveToAngle = 3*M_PI_4;
+        moveToAngle = (CGFloat) (3*M_PI_4);
     } else if (current < 9 * M_PI_4/2 && current > 7 * M_PI_4/2) {
-        moveToAngle = M_PI;
+        moveToAngle = (CGFloat) M_PI;
     } else if (current < 11 * M_PI_4/2 && current > 9 * M_PI_4/2) {
-        moveToAngle = 5*M_PI_4;
+        moveToAngle = (CGFloat) (5*M_PI_4);
     } else if (current < 13 * M_PI_4/2 && current > 11 * M_PI_4/2) {
-        moveToAngle = 3*M_PI_2;
+        moveToAngle = (CGFloat) (3*M_PI_2);
     } else if (current < 15 * M_PI_4/2 && current > 13 * M_PI_4/2) {
-        moveToAngle = 7*M_PI_4;
+        moveToAngle = (CGFloat) (7*M_PI_4);
     } else if (current < 16 * M_PI_4/2 && current > 15 * M_PI_4/2) {
-        moveToAngle = 2*M_PI;
+        moveToAngle = (CGFloat) (2*M_PI);
     } else {
         //offset is already in place
         return;
     }
 
-    double delta = moveToAngle - current;
-    double acceleration = 0.7f;
-    double velocity = sqrt(2*acceleration*acceleration*fabs(delta));
-
-//    if (velocity > 0) [self setupScrollTimer];
-
-    velocity *= fabs(delta)/delta;
-    self.velocity = (CGFloat) velocity;
-    self.acceleration = (CGFloat) acceleration;
-
+    [self animateScrollToOffset:moveToAngle];
+//    self.cellsOffset = moveToAngle;
 }
 
 //TODO:
