@@ -12,9 +12,9 @@
 
 @interface AVORotator : NSObject
 
--(CGPoint)rotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame;
++(CGPoint)rotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame;
 
--(double) getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
--(CGPoint) getPointForAngle:(double)angle onFrame:(CGRect)frame;
++(double) getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
++(CGPoint) getPointForAngle:(double)angle onFrame:(CGRect)frame;
 
 @end
