@@ -6,12 +6,25 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+@class AVOCarouselView;
+
+@protocol AVOCarouselViewDelegate
+
+@optional
+
+- (void)carouselView:(AVOCarouselView *)collectionView tapOnCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)carouselView:(AVOCarouselView *)collectionView longpressOnCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)carouselView:(AVOCarouselView *)collectionView liftOnCellAtIndexPath:(NSIndexPath *)indexPath;
+
+@end
+
 @interface AVOCarouselView : UIView
 
 @property (strong, nonatomic) NSArray *cells;
 @property (assign, nonatomic, readonly) BOOL clockwiseSpin;
 @property (assign, nonatomic, readonly) BOOL counterClockwiseSpin;
 
+@property (assign, nonatomic) id<AVOCarouselViewDelegate> delegate;
 
 -(instancetype) initWithFrame:(CGRect)frame;
 -(instancetype) initWithCoder:(NSCoder *) aDecoder;
