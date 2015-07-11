@@ -7,8 +7,11 @@
 //
 
 #import "AVOCarouselViewController.h"
+#import "AVOCarouselView.h"
 
-@interface AVOCarouselViewController ()
+@interface AVOCarouselViewController () <AVOCarouselViewDelegate>
+
+@property (weak, nonatomic) IBOutlet AVOCarouselView *carousel;
 
 @end
 
@@ -16,7 +19,24 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
+    [self.carousel setDelegate:self];
+
+}
+
+-(void)viewDidLayoutSubviews {
+    [self.carousel setFrame:self.view.bounds];
+    NSMutableArray *cells = [NSMutableArray new];
+    for (int index = 0; index < 9; index++) {
+        UILabel *cell = [UILabel new];
+        [cell setBackgroundColor:[UIColor redColor]];
+        [cell setTextAlignment:NSTextAlignmentCenter];
+        if (index == 8)
+            [cell setBackgroundColor:[UIColor blueColor]];
+        [cell setText:[NSString stringWithFormat:@"%i", index + 1]];
+        [cells addObject:cell];
+    }
+    [self.carousel setCells:cells];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -24,14 +44,18 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
+#pragma mark - <AVOCollectionViewDelegateLayout>
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)carouselView:(AVOCarouselView *)collectionView tapOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"Tap #%i", indexPath.item+1);
 }
-*/
+
+- (void)carouselView:(AVOCarouselView *)collectionView longpressOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"Longpress start #%i", indexPath.item + 1);
+}
+
+- (void)carouselView:(AVOCarouselView *)collectionView liftOnCellAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"End Longpress #%i", indexPath.item + 1);
+}
 
 @end

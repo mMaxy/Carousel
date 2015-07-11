@@ -23,7 +23,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 //helpers
 @property (strong, nonatomic, readonly) AVOPath *path;
 @property (strong, nonatomic, readonly) AVOSizeCalculator *calc;
-@property (strong, nonatomic, readonly) AVORotator *rotator;
 
 //Cells offsets, define angle by which inner views are moved
 @property (assign, nonatomic, readwrite) CGFloat cellsOffset;
@@ -45,6 +44,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 - (void)privateInit;
 
+- (void)stopAnimations;
 @end
 
 @implementation AVOCarouselView {
@@ -53,7 +53,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 @synthesize calc = _calc;
 @synthesize path = _path;
-@synthesize rotator = _rotator;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
@@ -70,7 +69,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 }
 
 - (void)privateInit {
-    //TODO: do smth
+    [self calculateDefaults];
 }
 
 - (void)calculateDefaults {
@@ -128,8 +127,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     CGPoint point = [recognizer locationInView:self];
 
     CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
-    double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.frame];
-    double endAngle = [self.rotator getAngleFromPoint:point onFrame:self.frame];
+    double startAngle = [AVORotator getAngleFromPoint:centerBefore onFrame:self.frame];
+    double endAngle = [AVORotator getAngleFromPoint:point onFrame:self.frame];
 
     if (startAngle-endAngle > M_PI_2) {
         endAngle += 2 * M_PI;
@@ -229,8 +228,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 //Handle tap
 - (void)handleTapGesture:(UITapGestureRecognizer *)recognizer {
     //stop animation
-    [self pop_removeAnimationForKey:@"bounce"];
-    [self pop_removeAnimationForKey:@"decelerate"];
+    [self stopAnimations];
 
     //call delegate to tell him, that view were tapped
     CGPoint point = [recognizer locationInView:self];
@@ -262,7 +260,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     p.y = p.y - self.calc.verticalInset - self.calc.cellSize.height/2;
     p.y *= 1/self.railsHeightToWidthRelation;
 
-    CGPoint rotated = [self.rotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
+    CGPoint rotated = [AVORotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
 
     rotated.y *=  self.railsHeightToWidthRelation;
     rotated.x = rotated.x + self.calc.horizontalInset + self.calc.cellSize.width/2;
@@ -372,26 +370,47 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     return frame;
 }
 
+- (void)stopAnimations {
+    [self pop_removeAnimationForKey:@"bounce"];
+    [self pop_removeAnimationForKey:@"decelerate"];
+}
+
 #pragma mark - Setters
 
 - (void)setCells:(NSArray *)cells {
     NSAssert([cells count] == 9, @"This view can handle only 9 cells by design");
+    for (id cell in cells) {
+        NSAssert([[cell class] isSubclassOfClass:[UIView class]], @"Cell must be subclass of UIView");
+    }
     if (_cells) {
         for (UIView *cell in _cells) {
             [cell removeFromSuperview];
         }
     }
-    NSUInteger index = 0;
-    for (UIView *cell in _cells) {
-        //TODO: place cell with default offset
-        CGRect frame = [self frameForCardAtIndex:index];
 
-        index ++;
-    }
+    [self stopAnimations];
     self.cellsOffset = 0.f;
+
     _cells = cells;
+    [self placeCells];
 }
 
+-(void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    [self calculateDefaults];
+    [self placeCells];
+
+}
+
+- (void)placeCells {
+    NSUInteger index = 0;
+    for (UIView *cell in _cells) {
+        CGRect frame = [self frameForCardAtIndex:index];
+        [cell setFrame:frame];
+        [self addSubview:cell];
+        index ++;
+    }
+}
 
 #pragma mark - Private lazy initialization
 
@@ -401,14 +420,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     }
     return _path;
 }
-
-- (AVORotator *)rotator {
-    if (!_rotator) {
-        _rotator = [[AVORotator alloc] init];
-    }
-    return _rotator;
-}
-
 
 - (AVOSizeCalculator *)calc {
     if (!_path || !_calc) {

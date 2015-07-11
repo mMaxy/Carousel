@@ -13,11 +13,20 @@
                         <viewControllerLayoutGuide type="top" id="jcp-fD-8V2"/>
                         <viewControllerLayoutGuide type="bottom" id="1kY-se-guf"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="hgf-t7-cSO" customClass="AVOCarouselView">
+                    <view key="view" contentMode="scaleToFill" id="hgf-t7-cSO">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bcf-Dk-W3Y" customClass="AVOCarouselView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="carousel" destination="bcf-Dk-W3Y" id="gA0-qY-Zjx"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8ru-zB-ADw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

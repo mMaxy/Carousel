@@ -101,8 +101,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     CGPoint point = [gestureRecognizer locationInView:self.collectionView];
 
     CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
-    double startAngle = [self.rotator getAngleFromPoint:centerBefore onFrame:self.collectionView.frame];
-    double endAngle = [self.rotator getAngleFromPoint:point onFrame:self.collectionView.frame];
+    double startAngle = [AVORotator getAngleFromPoint:centerBefore onFrame:self.collectionView.frame];
+    double endAngle = [AVORotator getAngleFromPoint:point onFrame:self.collectionView.frame];
 
     if (startAngle-endAngle > M_PI_2) {
         endAngle += 2 * M_PI;
@@ -322,7 +322,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     p.y = p.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
     p.y *= 1/self.railsHeightToWidthRelation;
 
-    CGPoint rotated = [self.rotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
+    CGPoint rotated = [AVORotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
 
     rotated.y *=  self.railsHeightToWidthRelation;
     rotated.x = rotated.x + self.sizeCalculator.horizontalInset + self.sizeCalculator.cellSize.width/2;
