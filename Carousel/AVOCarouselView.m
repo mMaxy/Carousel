@@ -8,6 +8,8 @@
 #import "AVOSizeCalculator.h"
 #import "AVORotator.h"
 #import "POPAnimation.h"
+#import "POPAnimatableProperty.h"
+#import "POPDecayAnimation.h"
 
 typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     AVOSpinNone = 0,
@@ -97,7 +99,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
     _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
 
-    _cellsOffset = 0.f;
+    _cellsOffset = 1.f;
     _acceleration = 0.f;
     _velocity = 0.f;
 
@@ -125,7 +127,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 - (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer {
     CGPoint translation = [recognizer translationInView:self];
     CGPoint point = [recognizer locationInView:self];
-
+    [self stopAnimations];
     CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
     double startAngle = [AVORotator getAngleFromPoint:centerBefore onFrame:self.frame];
     double endAngle = [AVORotator getAngleFromPoint:point onFrame:self.frame];
@@ -144,12 +146,8 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan:
-//            [self setupScrollTimer];
             self.startOffset = self.cellsOffset;
-//            self.panStartTime = CFAbsoluteTimeGetCurrent();
         case UIGestureRecognizerStateChanged: {
-//            self.lastChange = CFAbsoluteTimeGetCurrent();
-
             if (startAngle > endAngle) {
                 _spinDirection = AVOSpinCounterClockwise;
             } else if (startAngle < endAngle){
@@ -174,29 +172,9 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         case UIGestureRecognizerStateEnded: {
             self.startOffset = self.cellsOffset;
 
-            double curTime = CFAbsoluteTimeGetCurrent();
-//            double timeElapsed = curTime - self.lastChange;
-//            double deltaTime = curTime - self.panStartTime;
-
-            if (_spinDirection == AVOSpinNone){
-                //There was no spin before, don't scroll
-                return;
-            }
 //            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
 //            CGFloat angleVelocity = [self getAngleVelocityFromPoint:point withVectorVelocity:velocity];
 //            double angleVelocity = deltaAngle / deltaTime;
-
-//            if ( timeElapsed < 0.2 ) {
-//                //set velocity to self
-//                self.velocity = angleVelocity;
-//                self.acceleration = 1.5f ;
-//            } else {
-                // there was no scroll
-//                self.velocity = 0.f;
-//                self.acceleration = 0.f;
-//
-//                [self moveCellsToPlace];
-//            }
 
             _spinDirection = AVOSpinNone;
         } break;
@@ -235,6 +213,13 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
     [self.delegate carouselView:self
            tapOnCellAtIndexPath:indexPath];
+
+    //TODO: test, remove it
+    POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
+    decayAnimation.property = [self boundsOriginProperty];
+    decayAnimation.velocity = @(self.cellsOffset + 1.f);
+    [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
+//    self.cellsOffset += 1.f;
 }
 
 //TODO: move to path(or somewhere else)
@@ -389,7 +374,6 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     }
 
     [self stopAnimations];
-    self.cellsOffset = 0.f;
 
     _cells = cells;
     [self placeCells];
@@ -426,6 +410,35 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
         [self calculateDefaults];
     }
     return _calc;
+}
+
+- (void)setCellsOffset:(CGFloat)cellsOffset {
+    _cellsOffset = cellsOffset;
+    if (_cellsOffset > _maxCellsOffset) {
+        _cellsOffset -= _maxCellsOffset;
+    }
+    if (_cellsOffset < -_maxCellsOffset) {
+        _cellsOffset += _maxCellsOffset;
+    }
+    [self placeCells];
+}
+
+- (POPAnimatableProperty *)boundsOriginProperty {
+    POPAnimatableProperty *prop = [POPAnimatableProperty propertyWithName:@"com.artolkov.carousel.cellsOffset"
+                                                              initializer:^(POPMutableAnimatableProperty *local_prop) {
+                                                                  // read value
+                                                                  local_prop.readBlock = ^(id obj, CGFloat values[]) {
+                                                                      values[0] = [obj cellsOffset];
+                                                                  };
+                                                                  // write value
+                                                                  local_prop.writeBlock = ^(id obj, const CGFloat values[]) {
+                                                                      [obj setCellsOffset:values[0]];
+                                                                  };
+                                                                  // dynamics threshold
+                                                                  local_prop.threshold = 0.01;
+                                                              }];
+
+    return prop;
 }
 
 @end
