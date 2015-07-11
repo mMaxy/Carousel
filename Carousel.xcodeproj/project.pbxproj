@@ -21,6 +21,7 @@
 		22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30471B3843DA00AA33A3 /* AVOPathTests.m */; };
 		ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4FED23B96E4152ACBC086 /* AVORotator.m */; };
 		ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */; };
+		ABD4FC1EED8E03FC6D4AC5ED /* AVOCarouselView.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */; };
 		ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,8 @@
 		ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOPath.h; sourceTree = "<group>"; };
 		ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOPath.m; sourceTree = "<group>"; };
 		ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSizeCalculator.m; sourceTree = "<group>"; };
+		ABD4F51FF9F709AF3ACEC33D /* AVOCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCarouselView.h; sourceTree = "<group>"; };
+		ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCarouselView.m; sourceTree = "<group>"; };
 		ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOSizeCalculator.h; sourceTree = "<group>"; };
 		ABD4FED23B96E4152ACBC086 /* AVORotator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVORotator.m; sourceTree = "<group>"; };
 		ABD4FF60828368AAB8068A1B /* AVORotator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVORotator.h; sourceTree = "<group>"; };
@@ -120,6 +123,8 @@
 				ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */,
 				ABD4FED23B96E4152ACBC086 /* AVORotator.m */,
 				ABD4FF60828368AAB8068A1B /* AVORotator.h */,
+				ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */,
+				ABD4F51FF9F709AF3ACEC33D /* AVOCarouselView.h */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -261,6 +266,7 @@
 				ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */,
 				ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */,
 				ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */,
+				ABD4FC1EED8E03FC6D4AC5ED /* AVOCarouselView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
