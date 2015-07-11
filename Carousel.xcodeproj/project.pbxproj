@@ -14,10 +14,7 @@
 		228B8B971B35CE3800D0FCD0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B961B35CE3800D0FCD0 /* Images.xcassets */; };
 		228B8B9A1B35CE3800D0FCD0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B981B35CE3800D0FCD0 /* LaunchScreen.xib */; };
 		228B8BA61B35CE3800D0FCD0 /* CarouselTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */; };
-		228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */; };
-		228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */; };
 		228D373E1B51A81E00AD9AE1 /* AVOCarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228D373D1B51A81E00AD9AE1 /* AVOCarouselViewController.m */; };
-		22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */; };
 		22FE30461B381E9300AA33A3 /* AVOSizeCalculatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */; };
 		22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30471B3843DA00AA33A3 /* AVOPathTests.m */; };
 		28B4D45E58EE705E3224DDEC /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C4D45798214E7D6AEB62BF0 /* libPods.a */; };
@@ -51,14 +48,8 @@
 		228B8B9F1B35CE3800D0FCD0 /* CarouselTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarouselTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B8BA41B35CE3800D0FCD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CarouselTests.m; sourceTree = "<group>"; };
-		228B8BAF1B35D0D200D0FCD0 /* AVOCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewController.h; sourceTree = "<group>"; };
-		228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewController.m; sourceTree = "<group>"; };
-		228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewCell.h; sourceTree = "<group>"; };
-		228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewCell.m; sourceTree = "<group>"; };
 		228D373C1B51A81E00AD9AE1 /* AVOCarouselViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCarouselViewController.h; sourceTree = "<group>"; };
 		228D373D1B51A81E00AD9AE1 /* AVOCarouselViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCarouselViewController.m; sourceTree = "<group>"; };
-		22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewLayout.h; sourceTree = "<group>"; };
-		22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewLayout.m; sourceTree = "<group>"; };
 		22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSizeCalculatorTests.m; sourceTree = "<group>"; };
 		22FE30471B3843DA00AA33A3 /* AVOPathTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOPathTests.m; sourceTree = "<group>"; };
 		2F102F8CBB2CDB4FFD6B0204 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -121,12 +112,6 @@
 				228B8B961B35CE3800D0FCD0 /* Images.xcassets */,
 				228B8B981B35CE3800D0FCD0 /* LaunchScreen.xib */,
 				228B8B891B35CE3800D0FCD0 /* Supporting Files */,
-				228B8BAF1B35D0D200D0FCD0 /* AVOCollectionViewController.h */,
-				228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */,
-				228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */,
-				228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */,
-				22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */,
-				22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */,
 				ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */,
 				ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */,
 				ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */,
@@ -324,9 +309,6 @@
 			files = (
 				228B8B8F1B35CE3800D0FCD0 /* AppDelegate.m in Sources */,
 				228B8B8C1B35CE3800D0FCD0 /* main.m in Sources */,
-				22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */,
-				228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */,
-				228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */,
 				ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */,
 				ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */,
 				228D373E1B51A81E00AD9AE1 /* AVOCarouselViewController.m in Sources */,
