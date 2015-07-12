@@ -8,6 +8,9 @@
 
 @class AVOCarouselView;
 
+FOUNDATION_EXPORT const float kAVOCarouselDecelerationValue;
+FOUNDATION_EXPORT const float kAVOCarouselVelocityValue;
+
 @protocol AVOCarouselViewDelegate
 
 @optional
