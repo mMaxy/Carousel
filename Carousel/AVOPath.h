@@ -18,13 +18,13 @@
 
 - (void)moveCenter:(CGPoint *)center byAngle:(double) angle;
 
-- (CGPoint)getCenterForIndex:(NSUInteger) index;
-- (CGPoint)getCenterForIndexPath:(NSIndexPath *) indexPath;
+- (CGPoint)calculateCenterForIndex:(NSUInteger) index;
+- (CGPoint)calculateCenterForIndexPath:(NSIndexPath *) indexPath;
 
 - (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point withOffset:(CGFloat)offset;
 
-- (CGFloat)getNearestFixedPositionFrom:(CGFloat)currentPosition;
+- (CGFloat)findNearestFixedPositionFrom:(CGFloat)currentPosition;
 
-- (NSIndexPath *)getCellIndexWithPoint:(CGPoint) point;
+- (NSIndexPath *)findCellIndexWithPoint:(CGPoint) point;
 
 @end

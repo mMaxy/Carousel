@@ -26,8 +26,6 @@ FOUNDATION_EXPORT NSString *const kAVOCarouselViewDecayAnimationName;
 @interface AVOCarouselView : UIView
 
 @property (strong, nonatomic) NSArray *cells;
-@property (assign, nonatomic, readonly) BOOL clockwiseSpin;
-@property (assign, nonatomic, readonly) BOOL counterClockwiseSpin;
 
 @property (assign, nonatomic) id<AVOCarouselViewDelegate> delegate;
 

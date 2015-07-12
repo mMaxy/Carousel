@@ -18,7 +18,7 @@
 		22FE30461B381E9300AA33A3 /* AVOSizeCalculatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */; };
 		22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30471B3843DA00AA33A3 /* AVOPathTests.m */; };
 		28B4D45E58EE705E3224DDEC /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C4D45798214E7D6AEB62BF0 /* libPods.a */; };
-		ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4FED23B96E4152ACBC086 /* AVORotator.m */; };
+		ABD4F57D794475D6C32EB681 /* AVOGeometryCalculations.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4FED23B96E4152ACBC086 /* AVOGeometryCalculations.m */; };
 		ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */; };
 		ABD4FC1EED8E03FC6D4AC5ED /* AVOCarouselView.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */; };
 		ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */; };
@@ -60,8 +60,8 @@
 		ABD4F51FF9F709AF3ACEC33D /* AVOCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCarouselView.h; sourceTree = "<group>"; };
 		ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCarouselView.m; sourceTree = "<group>"; };
 		ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOSizeCalculator.h; sourceTree = "<group>"; };
-		ABD4FED23B96E4152ACBC086 /* AVORotator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVORotator.m; sourceTree = "<group>"; };
-		ABD4FF60828368AAB8068A1B /* AVORotator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVORotator.h; sourceTree = "<group>"; };
+		ABD4FED23B96E4152ACBC086 /* AVOGeometryCalculations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOGeometryCalculations.m; sourceTree = "<group>"; };
+		ABD4FF60828368AAB8068A1B /* AVOGeometryCalculations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOGeometryCalculations.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,8 +116,8 @@
 				ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */,
 				ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */,
 				ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */,
-				ABD4FED23B96E4152ACBC086 /* AVORotator.m */,
-				ABD4FF60828368AAB8068A1B /* AVORotator.h */,
+				ABD4FED23B96E4152ACBC086 /* AVOGeometryCalculations.m */,
+				ABD4FF60828368AAB8068A1B /* AVOGeometryCalculations.h */,
 				ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */,
 				ABD4F51FF9F709AF3ACEC33D /* AVOCarouselView.h */,
 				228D373C1B51A81E00AD9AE1 /* AVOCarouselViewController.h */,
@@ -312,7 +312,7 @@
 				ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */,
 				ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */,
 				228D373E1B51A81E00AD9AE1 /* AVOCarouselViewController.m in Sources */,
-				ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */,
+				ABD4F57D794475D6C32EB681 /* AVOGeometryCalculations.m in Sources */,
 				ABD4FC1EED8E03FC6D4AC5ED /* AVOCarouselView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
