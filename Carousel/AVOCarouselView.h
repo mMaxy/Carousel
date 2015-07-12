@@ -26,7 +26,6 @@ FOUNDATION_EXPORT NSString *const kAVOCarouselViewDecayAnimationName;
 @interface AVOCarouselView : UIView
 
 @property (strong, nonatomic) NSArray *cells;
-
 @property (assign, nonatomic) id<AVOCarouselViewDelegate> delegate;
 
 -(instancetype) initWithFrame:(CGRect)frame;
