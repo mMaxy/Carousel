@@ -44,3 +44,10 @@ Carthage/Build
 
 # idea
 .idea/
+
+#Pods
+Pods/*
+Podfile.lock
+
+# workspace
+*.xcworkspace

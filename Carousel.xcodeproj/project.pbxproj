@@ -14,13 +14,13 @@
 		228B8B971B35CE3800D0FCD0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B961B35CE3800D0FCD0 /* Images.xcassets */; };
 		228B8B9A1B35CE3800D0FCD0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 228B8B981B35CE3800D0FCD0 /* LaunchScreen.xib */; };
 		228B8BA61B35CE3800D0FCD0 /* CarouselTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */; };
-		228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */; };
-		228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */; };
-		22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */; };
+		228D373E1B51A81E00AD9AE1 /* AVOCarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 228D373D1B51A81E00AD9AE1 /* AVOCarouselViewController.m */; };
 		22FE30461B381E9300AA33A3 /* AVOSizeCalculatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */; };
 		22FE30481B3843DA00AA33A3 /* AVOPathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22FE30471B3843DA00AA33A3 /* AVOPathTests.m */; };
-		ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4FED23B96E4152ACBC086 /* AVORotator.m */; };
+		28B4D45E58EE705E3224DDEC /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C4D45798214E7D6AEB62BF0 /* libPods.a */; };
+		ABD4F57D794475D6C32EB681 /* AVOGeometryCalculations.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4FED23B96E4152ACBC086 /* AVOGeometryCalculations.m */; };
 		ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */; };
+		ABD4FC1EED8E03FC6D4AC5ED /* AVOCarouselView.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */; };
 		ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C4D45798214E7D6AEB62BF0 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2284C1B41B3BF3D600187396 /* AVORotatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVORotatorTests.m; sourceTree = "<group>"; };
 		228B8B861B35CE3800D0FCD0 /* Carousel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Carousel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B8B8A1B35CE3800D0FCD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -47,20 +48,20 @@
 		228B8B9F1B35CE3800D0FCD0 /* CarouselTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarouselTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		228B8BA41B35CE3800D0FCD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228B8BA51B35CE3800D0FCD0 /* CarouselTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CarouselTests.m; sourceTree = "<group>"; };
-		228B8BAF1B35D0D200D0FCD0 /* AVOCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewController.h; sourceTree = "<group>"; };
-		228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewController.m; sourceTree = "<group>"; };
-		228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewCell.h; sourceTree = "<group>"; };
-		228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewCell.m; sourceTree = "<group>"; };
-		22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCollectionViewLayout.h; sourceTree = "<group>"; };
-		22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCollectionViewLayout.m; sourceTree = "<group>"; };
+		228D373C1B51A81E00AD9AE1 /* AVOCarouselViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCarouselViewController.h; sourceTree = "<group>"; };
+		228D373D1B51A81E00AD9AE1 /* AVOCarouselViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCarouselViewController.m; sourceTree = "<group>"; };
 		22FE30451B381E9300AA33A3 /* AVOSizeCalculatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSizeCalculatorTests.m; sourceTree = "<group>"; };
 		22FE30471B3843DA00AA33A3 /* AVOPathTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOPathTests.m; sourceTree = "<group>"; };
+		2F102F8CBB2CDB4FFD6B0204 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		39788719322DAEE69E70AAF3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOPath.h; sourceTree = "<group>"; };
 		ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOPath.m; sourceTree = "<group>"; };
 		ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSizeCalculator.m; sourceTree = "<group>"; };
+		ABD4F51FF9F709AF3ACEC33D /* AVOCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOCarouselView.h; sourceTree = "<group>"; };
+		ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOCarouselView.m; sourceTree = "<group>"; };
 		ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOSizeCalculator.h; sourceTree = "<group>"; };
-		ABD4FED23B96E4152ACBC086 /* AVORotator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVORotator.m; sourceTree = "<group>"; };
-		ABD4FF60828368AAB8068A1B /* AVORotator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVORotator.h; sourceTree = "<group>"; };
+		ABD4FED23B96E4152ACBC086 /* AVOGeometryCalculations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOGeometryCalculations.m; sourceTree = "<group>"; };
+		ABD4FF60828368AAB8068A1B /* AVOGeometryCalculations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVOGeometryCalculations.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28B4D45E58EE705E3224DDEC /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,8 @@
 				228B8B881B35CE3800D0FCD0 /* Carousel */,
 				228B8BA21B35CE3800D0FCD0 /* CarouselTests */,
 				228B8B871B35CE3800D0FCD0 /* Products */,
+				FB25F198FD47382DCCEFC6D2 /* Pods */,
+				4AA06A30070D81482565D08B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,18 +112,16 @@
 				228B8B961B35CE3800D0FCD0 /* Images.xcassets */,
 				228B8B981B35CE3800D0FCD0 /* LaunchScreen.xib */,
 				228B8B891B35CE3800D0FCD0 /* Supporting Files */,
-				228B8BAF1B35D0D200D0FCD0 /* AVOCollectionViewController.h */,
-				228B8BB01B35D0D200D0FCD0 /* AVOCollectionViewController.m */,
-				228B8BB21B35D13100D0FCD0 /* AVOCollectionViewCell.h */,
-				228B8BB31B35D13100D0FCD0 /* AVOCollectionViewCell.m */,
-				22FD83611B36C6FB000127FD /* AVOCollectionViewLayout.h */,
-				22FD83621B36C6FB000127FD /* AVOCollectionViewLayout.m */,
 				ABD4F43DACD72D6FB8E0DD06 /* AVOSizeCalculator.m */,
 				ABD4F914884FDB53B02EE13F /* AVOSizeCalculator.h */,
 				ABD4F3AD28C28AEF6D43B527 /* AVOPath.m */,
 				ABD4F0D1312AB6A11C8E6A5B /* AVOPath.h */,
-				ABD4FED23B96E4152ACBC086 /* AVORotator.m */,
-				ABD4FF60828368AAB8068A1B /* AVORotator.h */,
+				ABD4FED23B96E4152ACBC086 /* AVOGeometryCalculations.m */,
+				ABD4FF60828368AAB8068A1B /* AVOGeometryCalculations.h */,
+				ABD4F6A0C4B1167D4F2758AC /* AVOCarouselView.m */,
+				ABD4F51FF9F709AF3ACEC33D /* AVOCarouselView.h */,
+				228D373C1B51A81E00AD9AE1 /* AVOCarouselViewController.h */,
+				228D373D1B51A81E00AD9AE1 /* AVOCarouselViewController.m */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -153,6 +155,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		4AA06A30070D81482565D08B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1C4D45798214E7D6AEB62BF0 /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FB25F198FD47382DCCEFC6D2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				39788719322DAEE69E70AAF3 /* Pods.debug.xcconfig */,
+				2F102F8CBB2CDB4FFD6B0204 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -160,9 +179,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 228B8BA91B35CE3800D0FCD0 /* Build configuration list for PBXNativeTarget "Carousel" */;
 			buildPhases = (
+				AD001D7E18C780D723D11533 /* Check Pods Manifest.lock */,
 				228B8B821B35CE3800D0FCD0 /* Sources */,
 				228B8B831B35CE3800D0FCD0 /* Frameworks */,
 				228B8B841B35CE3800D0FCD0 /* Resources */,
+				48C65710B716C082492A3998 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -248,6 +269,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		48C65710B716C082492A3998 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AD001D7E18C780D723D11533 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		228B8B821B35CE3800D0FCD0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -255,12 +309,11 @@
 			files = (
 				228B8B8F1B35CE3800D0FCD0 /* AppDelegate.m in Sources */,
 				228B8B8C1B35CE3800D0FCD0 /* main.m in Sources */,
-				22FD83631B36C6FC000127FD /* AVOCollectionViewLayout.m in Sources */,
-				228B8BB11B35D0D200D0FCD0 /* AVOCollectionViewController.m in Sources */,
-				228B8BB41B35D13100D0FCD0 /* AVOCollectionViewCell.m in Sources */,
 				ABD4FA0F3645231EB04CE59B /* AVOSizeCalculator.m in Sources */,
 				ABD4FDC873FF46720CDEFE0F /* AVOPath.m in Sources */,
-				ABD4F57D794475D6C32EB681 /* AVORotator.m in Sources */,
+				228D373E1B51A81E00AD9AE1 /* AVOCarouselViewController.m in Sources */,
+				ABD4F57D794475D6C32EB681 /* AVOGeometryCalculations.m in Sources */,
+				ABD4FC1EED8E03FC6D4AC5ED /* AVOCarouselView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,23 +440,27 @@
 		};
 		228B8BAA1B35CE3800D0FCD0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 39788719322DAEE69E70AAF3 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Carousel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
 			};
 			name = Debug;
 		};
 		228B8BAB1B35CE3800D0FCD0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F102F8CBB2CDB4FFD6B0204 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Carousel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"${PROJECT_DIR}/Pods\"/**";
 			};
 			name = Release;
 		};
