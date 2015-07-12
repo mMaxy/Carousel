@@ -5,6 +5,7 @@
 
 #import "AVOPath.h"
 #import "AVOSizeCalculator.h"
+#import "AVORotator.h"
 
 @interface AVOPath ()
 
@@ -14,9 +15,7 @@
 
 - (NSArray *)getSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders;
 
-- (NSIndexPath *)getPathForArray:(NSArray *)result;
 
-- (NSIndexPath *)getPathForPoint:(CGPoint)point inGrid:(struct Grid)grid;
 @end
 
 @implementation AVOPath {
@@ -24,6 +23,35 @@
 }
 
 @dynamic possibleOutcomes;
+
+- (void)setSizeCalculator:(AVOSizeCalculator *)sizeCalculator {
+    _sizeCalculator = sizeCalculator;
+    CGFloat railYMin = [self getCenterForIndex:2].y;
+    CGFloat railYMax = [self getCenterForIndex:4].y;
+    CGFloat railXMin = [self getCenterForIndex:0].x;
+    CGFloat railXMax = [self getCenterForIndex:2].x;
+    _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
+    _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
+}
+
+- (void)moveCenter:(CGPoint *)center byAngle:(double) angle {
+    CGPoint p = (*center);
+    double remain = angle;
+
+    CGRect f = self.rails;
+
+    p.x = p.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
+    p.y = p.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
+    p.y *= 1/self.railsHeightToWidthRelation;
+
+    CGPoint rotated = [AVORotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
+
+    rotated.y *=  self.railsHeightToWidthRelation;
+    rotated.x = rotated.x + self.sizeCalculator.horizontalInset + self.sizeCalculator.cellSize.width/2;
+    rotated.y = rotated.y + self.sizeCalculator.verticalInset + self.sizeCalculator.cellSize.height/2;
+
+    (*center) = CGPointMake(rotated.x , rotated.y);
+}
 
 - (CGPoint)getCenterForIndex:(NSUInteger) i {
     CGPoint result;
@@ -91,68 +119,30 @@
     return res;
 }
 
-- (NSArray *)getIndexesInRect:(CGRect)rect {
-    CGFloat fromX = rect.origin.x;
-    CGFloat toX = fromX + rect.size.width;
-    CGFloat fromY = rect.origin.y;
-    CGFloat toY = fromY + rect.size.height;
-    NSMutableArray *matrix;
-    NSMutableArray *res = [NSMutableArray new];
 
-    struct Grid frames = self.sizeCalculator.cellFrames;
-    matrix = [[self possibleOutcomes] mutableCopy];
-    for (NSUInteger index = 0; index < [matrix count]; index ++) {
-        matrix[index] = [matrix[index] mutableCopy];
+
+- (CGFloat)getNearestFixedPositionFrom:(CGFloat)currentPosition {
+    CGFloat moveToAngle = currentPosition;
+    if (currentPosition < M_PI_4/2 && currentPosition > 0) {
+        moveToAngle = 0;
+    } else if (currentPosition < 3 * M_PI_4/2 && currentPosition > M_PI_4/2) {
+        moveToAngle = (CGFloat) M_PI_4;
+    } else if (currentPosition < 5 * M_PI_4/2 && currentPosition > 3 * M_PI_4/2) {
+        moveToAngle = (CGFloat) M_PI_2;
+    } else if (currentPosition < 7 * M_PI_4/2 && currentPosition > 5 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (3*M_PI_4);
+    } else if (currentPosition < 9 * M_PI_4/2 && currentPosition > 7 * M_PI_4/2) {
+        moveToAngle = (CGFloat) M_PI;
+    } else if (currentPosition < 11 * M_PI_4/2 && currentPosition > 9 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (5*M_PI_4);
+    } else if (currentPosition < 13 * M_PI_4/2 && currentPosition > 11 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (3*M_PI_2);
+    } else if (currentPosition < 15 * M_PI_4/2 && currentPosition > 13 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (7*M_PI_4);
+    } else if (currentPosition < 16 * M_PI_4/2 && currentPosition > 15 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (2*M_PI);
     }
-
-    NSArray *topBorders = @[
-            @(frames.yTopCellTopBorder),
-            @(frames.yCenterCellTopBorder),
-            @(frames.yBotCellTopBorder)
-    ];
-    NSArray *botBorders = @[
-            @(frames.yTopCellBotBorder),
-            @(frames.yCenterCellBotBorder),
-            @(frames.yBotCellBotBorder)
-    ];
-
-    NSArray *leftBorders = @[
-            @(frames.xLeftCellLeftBorder),
-            @(frames.xCenterCellLeftBorder),
-            @(frames.xRightCellLeftBorder)
-    ];
-    NSArray *rightBorders = @[
-            @(frames.xLeftCellRightBorder),
-            @(frames.xCenterCellRightBorder),
-            @(frames.xRightCellRightBorder)
-    ];
-
-    for (NSUInteger row = 0; row < [matrix count]; row ++) {
-        for (NSUInteger column = 0; column < [matrix[row] count]; column ++) {
-
-            BOOL rectStartsOnRightFromRightBorder = fromX >= [rightBorders[column] floatValue];
-            BOOL rectStartsUnderBotBorder = fromY >= [botBorders[row] floatValue];
-            BOOL rectEndsOnLeftFromLeftBorder = toX <= [leftBorders[column] floatValue];
-            BOOL rectEndsUpperTopBorder = toY <= [topBorders[row] floatValue];
-
-            BOOL rectStartsRighterOrUnderThanCell = rectStartsOnRightFromRightBorder || rectStartsUnderBotBorder;
-            BOOL rectEndsLefterOrUpperThanCell = rectEndsOnLeftFromLeftBorder || rectEndsUpperTopBorder;
-
-            if (rectStartsRighterOrUnderThanCell || rectEndsLefterOrUpperThanCell) {
-                matrix[row][column] = [NSNull null];
-            }
-        }
-    }
-
-    for (NSUInteger i = 0; i < [matrix count]; i++) {
-        for (NSUInteger y = 0; y < [matrix[i] count]; y++) {
-            if (matrix[i][y] != [NSNull null]) {
-                [res addObject:matrix[i][y]];
-            }
-        }
-    }
-
-    return [res copy];
+    return moveToAngle;
 }
 
 #pragma mark Private methods

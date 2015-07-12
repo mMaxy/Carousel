@@ -10,10 +10,15 @@
 
 @interface AVOPath : NSObject
 
+@property (assign, nonatomic, readonly) CGRect rails;
+@property (assign, nonatomic, readonly) CGFloat railsHeightToWidthRelation;
 @property (weak, nonatomic) AVOSizeCalculator *sizeCalculator;
 
+- (void)moveCenter:(CGPoint *)center byAngle:(double) angle;
 - (CGPoint)getCenterForIndex:(NSUInteger) index;
 - (CGPoint)getCenterForIndexPath:(NSIndexPath *) indexPath;
+
+- (CGFloat)getNearestFixedPositionFrom:(CGFloat)currentPosition;
 
 - (NSIndexPath *)getCellIndexWithPoint:(CGPoint) point;
 
@@ -21,6 +26,5 @@
                           withResultDirection:(CGPoint *) direction
                             andResultDistance:(CGFloat *) distance;
 
-- (NSArray *)getIndexesInRect:(CGRect) rect;
 
 @end
