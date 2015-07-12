@@ -43,7 +43,7 @@
     return result;
 }
 
-+ (double)getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame {
++ (CGFloat)getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame {
     double res;
 
     CGPoint p = point;

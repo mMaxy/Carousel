@@ -126,57 +126,60 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 //handle Pan
 - (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer {
-    CGPoint translation = [recognizer translationInView:self];
-    CGPoint point = [recognizer locationInView:self];
-    [self stopAnimations];
-    CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
-    double startAngle = [AVORotator getAngleFromPoint:centerBefore onFrame:self.frame];
-    double endAngle = [AVORotator getAngleFromPoint:point onFrame:self.frame];
 
-    if (startAngle-endAngle > M_PI_2) {
-        endAngle += 2 * M_PI;
-    }
-    if (endAngle-startAngle > M_PI_2) {
-        endAngle -= 2 * M_PI;
-    }
-
-    double deltaAngle = endAngle - startAngle;
-
-    self.velocity = 0.f;
-    self.acceleration = 0.f;
 
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan:
+            [self stopAnimations];
             self.startOffset = self.cellsOffset;
         case UIGestureRecognizerStateChanged: {
-            if (startAngle > endAngle) {
-                _spinDirection = AVOSpinCounterClockwise;
-            } else if (startAngle < endAngle){
-                _spinDirection = AVOSpinClockwise;
-            } else {
-                _spinDirection = AVOSpinNone;
+            CGPoint translation = [recognizer translationInView:self];
+            CGPoint point = [recognizer locationInView:self];
+            CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
+            double startAngle = [AVORotator getAngleFromPoint:centerBefore onFrame:self.frame];
+            CGFloat endAngle = [AVORotator getAngleFromPoint:point onFrame:self.frame];
+
+//            self.cellsOffset = endAngle;
+            if (startAngle-endAngle > M_PI) {
+                endAngle += 2 * M_PI;
             }
+            if (endAngle-startAngle > M_PI) {
+                endAngle -= 2 * M_PI;
+            }
+            NSLog(@"State Changed with start Angle %f  and End Angle %f", startAngle, endAngle);
 
             NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
             if (indexPath == nil || indexPath.item == 8) {
                 return;
             }
 
+            double deltaAngle = endAngle - startAngle;
+
+            if ( deltaAngle < 0) {
+                _spinDirection = AVOSpinCounterClockwise;
+            } else if (deltaAngle > 0){
+                _spinDirection = AVOSpinClockwise;
+            } else {
+                _spinDirection = AVOSpinNone;
+            }
+
             self.cellsOffset = self.startOffset + (CGFloat) (deltaAngle);
-            if (self.cellsOffset > 2*M_PI)
-                self.cellsOffset -= 2*M_PI;
-            if (self.cellsOffset < 0.f)
-                self.cellsOffset += 2*M_PI;
 
         } break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
-            self.startOffset = self.cellsOffset;
+            CGPoint velocity = [recognizer velocityInView:self];
+            CGPoint point = [recognizer locationInView:self];
 
-            [self moveCellsToPlace];
-//            CGPoint velocity = [gestureRecognizer velocityInView:self.collectionView];
-//            CGFloat angleVelocity = [self getAngleVelocityFromPoint:point withVectorVelocity:velocity];
-//            double angleVelocity = deltaAngle / deltaTime;
+            NSLog(@"Pan ended with velocity: %@", NSStringFromCGPoint(velocity));
+            CGFloat angleVelocity = [self getAngleVelocityFromPoint:point withVectorVelocity:velocity];
+            NSLog(@"Result angle velocity: %f", angleVelocity);
+
+            POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
+            decayAnimation.property = [self boundsOriginProperty];
+            decayAnimation.velocity = @(angleVelocity);
+            decayAnimation.deceleration = 0.999f;
+            [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
 
             _spinDirection = AVOSpinNone;
         } break;
@@ -219,17 +222,10 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     //TODO: test, remove it
 
     [self moveCellsToPlace];
-//    [self animateScrollToOffset:(self.cellsOffset + 1.f)];
-    //    self.cellsOffset += 1.f;
 }
 
 - (void)animateScrollToOffset:(CGFloat)offset {
     NSLog(@"%f", offset);
-//    POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
-//    decayAnimation.property = [self boundsOriginProperty];
-//    decayAnimation.velocity = @(offset);
-//    [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
-
     POPSpringAnimation *springAnimation = [POPSpringAnimation animation];
     springAnimation.property = [self boundsOriginProperty];
     springAnimation.velocity = @(0.3f);
@@ -274,40 +270,23 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 //TODO: move somewhere and refactor without offset
 //get angle velocity, given vector and point from that vector starts
 - (CGFloat)getAngleVelocityFromPoint:(CGPoint)point withVectorVelocity:(CGPoint)velocity {
-    CGFloat x;
-    CGFloat y;
-    // getting sum of vectors (from frame center to pan ended location with velocity)
-    //if (point.y > self.collectionView.frame.size.height)
-    velocity.y *= -1;
-    x = point.x + velocity.x;
-    y = point.y + velocity.y;
-    CGPoint delta = CGPointMake(x, y);
-
-    // spin sum vector on offset
-    [self moveCenter:&delta byAngle:self.cellsOffset];
-
-    // real velocity is difference between moved sum vector and offset vector
-    x = delta.x - ((CGFloat) cos(self.cellsOffset)) * self.rails.size.width/2;
-    y = delta.y - ((CGFloat) sin(self.cellsOffset)) * self.rails.size.height/2;
-
-    // setting real velocity vector
-    velocity.x = x;
-    velocity.y = y;
-
-    //spin velocity vector to be like there is no offset
-    // It allows us understand are moving going clockwise or not
-    x = (CGFloat) (velocity.x * cos(-self.cellsOffset) + velocity.y * sin(-self.cellsOffset));
-    y = (CGFloat) (velocity.y * cos(-self.cellsOffset) - velocity.x * sin(-self.cellsOffset));
-    velocity.x = (CGFloat) x;
-    velocity.y = (CGFloat) y;
-
-    CGFloat distVelocity = velocity.y;
+//    CGFloat angle = (CGFloat) [AVORotator getAngleFromPoint:point onFrame:self.frame];
+//
+//    CGRect tmpFrame = CGRectMake(0.f, 0.f, 2*fmaxf(fabsf(velocity.x), fabsf(velocity.y)), 2*fmaxf(fabsf(velocity.x), fabsf(velocity.y)));
+//    velocity.x += fmaxf(fabsf(velocity.x), fabsf(velocity.y));
+//    velocity.y += fmaxf(fabsf(velocity.x), fabsf(velocity.y));
+//
+//    velocity = [AVORotator rotatedPointFromPoint:velocity byAngle:angle inFrame:tmpFrame];
+//
+//    CGFloat distVelocity = velocity.y;//
+    CGFloat distVelocity;// = velocity.y;
     //normalized
-    distVelocity *= 1/ self.railsHeightToWidthRelation;
-    CGFloat railsPerimeter = self.rails.size.width*2 + self.rails.size.height*2;
-    CGFloat velocityAsPartOfPerimeter = distVelocity / (railsPerimeter);
-    //counting angle velocity. It goes in opposite direction than velocity vector
-    CGFloat angleVelocity = (CGFloat) (2 * M_PI * velocityAsPartOfPerimeter);
+//    distVelocity *= 1/self.railsHeightToWidthRelation;
+//    CGFloat railsPerimeter = self.rails.size.width*2 + self.rails.size.height*2;
+//    distVelocity =
+//    CGFloat velocityAsPartOfPerimeter = distVelocity / (railsPerimeter);
+
+    CGFloat angleVelocity = (CGFloat) sqrtf(velocity.x*velocity.x + velocity.y*velocity.y) / self.rails.size.width/2;
 
     if (angleVelocity > 0 && _spinDirection == AVOSpinCounterClockwise) {
         angleVelocity *= -1;
@@ -318,35 +297,34 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     return angleVelocity;
 }
 
-//TODO: decide, what to do with this method
 -(void) moveCellsToPlace {
-    CGFloat moveToAngle;
-    CGFloat current = self.cellsOffset;
-    if (current < M_PI_4/2 && current > 0) {
-        moveToAngle = 0;
-    } else if (current < 3 * M_PI_4/2 && current > M_PI_4/2) {
-        moveToAngle = (CGFloat) M_PI_4;
-    } else if (current < 5 * M_PI_4/2 && current > 3 * M_PI_4/2) {
-        moveToAngle = (CGFloat) M_PI_2;
-    } else if (current < 7 * M_PI_4/2 && current > 5 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (3*M_PI_4);
-    } else if (current < 9 * M_PI_4/2 && current > 7 * M_PI_4/2) {
-        moveToAngle = (CGFloat) M_PI;
-    } else if (current < 11 * M_PI_4/2 && current > 9 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (5*M_PI_4);
-    } else if (current < 13 * M_PI_4/2 && current > 11 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (3*M_PI_2);
-    } else if (current < 15 * M_PI_4/2 && current > 13 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (7*M_PI_4);
-    } else if (current < 16 * M_PI_4/2 && current > 15 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (2*M_PI);
-    } else {
-        //offset is already in place
-        return;
-    }
-
+    CGFloat moveToAngle = [self getNearestFixedPositionFrom:self.cellsOffset];
     [self animateScrollToOffset:moveToAngle];
-//    self.cellsOffset = moveToAngle;
+}
+
+//TODO: decide, what to do with this method
+- (CGFloat)getNearestFixedPositionFrom:(CGFloat)currentPosition {
+    CGFloat moveToAngle = currentPosition;
+    if (currentPosition < M_PI_4/2 && currentPosition > 0) {
+        moveToAngle = 0;
+    } else if (currentPosition < 3 * M_PI_4/2 && currentPosition > M_PI_4/2) {
+        moveToAngle = (CGFloat) M_PI_4;
+    } else if (currentPosition < 5 * M_PI_4/2 && currentPosition > 3 * M_PI_4/2) {
+        moveToAngle = (CGFloat) M_PI_2;
+    } else if (currentPosition < 7 * M_PI_4/2 && currentPosition > 5 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (3*M_PI_4);
+    } else if (currentPosition < 9 * M_PI_4/2 && currentPosition > 7 * M_PI_4/2) {
+        moveToAngle = (CGFloat) M_PI;
+    } else if (currentPosition < 11 * M_PI_4/2 && currentPosition > 9 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (5*M_PI_4);
+    } else if (currentPosition < 13 * M_PI_4/2 && currentPosition > 11 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (3*M_PI_2);
+    } else if (currentPosition < 15 * M_PI_4/2 && currentPosition > 13 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (7*M_PI_4);
+    } else if (currentPosition < 16 * M_PI_4/2 && currentPosition > 15 * M_PI_4/2) {
+        moveToAngle = (CGFloat) (2*M_PI);
+    }
+    return moveToAngle;
 }
 
 //TODO:
@@ -426,7 +404,7 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     if (_cellsOffset > _maxCellsOffset) {
         _cellsOffset -= _maxCellsOffset;
     }
-    if (_cellsOffset < -_maxCellsOffset) {
+    if (_cellsOffset < 0) {
         _cellsOffset += _maxCellsOffset;
     }
     [self placeCells];
