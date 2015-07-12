@@ -11,10 +11,7 @@
 
 @property (strong, nonatomic, readonly) NSArray *possibleOutcomes;
 
-- (void)setDistance:(CGFloat *)distance andDirection:(CGPoint *)direction fromPoint:(CGPoint)from toPoint:(CGPoint)to;
-
 - (NSArray *)getSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders;
-
 
 @end
 
@@ -24,6 +21,8 @@
 
 @dynamic possibleOutcomes;
 
+#pragma mark - Setters
+
 - (void)setSizeCalculator:(AVOSizeCalculator *)sizeCalculator {
     _sizeCalculator = sizeCalculator;
     CGFloat railYMin = [self getCenterForIndex:2].y;
@@ -32,6 +31,22 @@
     CGFloat railXMax = [self getCenterForIndex:2].x;
     _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
     _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
+}
+
+#pragma mark - Interface realization
+
+- (CGRect)frameForCardAtIndex:(NSUInteger)index withOffset:(CGFloat) offset {
+    CGRect frame = CGRectZero;
+
+    frame.size = [self.sizeCalculator cellSize];
+    CGPoint center = [self getCenterForIndex:index];
+    if (index != 8) {
+        [self moveCenter:&center byAngle:offset];
+    }
+
+    frame.origin = CGPointMake(center.x - frame.size.width/2, center.y - frame.size.height/2);
+
+    return frame;
 }
 
 - (void)moveCenter:(CGPoint *)center byAngle:(double) angle {
@@ -106,20 +121,16 @@
     return res;
 }
 
-- (NSIndexPath *)getNearestCellIndexFromPoint:(CGPoint)point withResultDirection:(CGPoint *)direction andResultDistance:(CGFloat *)distance {
-    NSIndexPath *res = nil;
+- (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point withOffset:(CGFloat) offset {
+    NSIndexPath *indexPath = [self getCellIndexWithPoint:point];
+    if (indexPath.item != 8) {
+        point = [self getCenterForIndexPath:indexPath];
 
-    struct Grid borders = self.sizeCalculator.borders;
-    res = [self getPathForPoint:point inGrid:borders];
-
-    CGPoint center = [self getCenterForIndexPath:res];
-
-    [self setDistance:distance andDirection:direction fromPoint:point toPoint:center];
-
-    return res;
+        [self moveCenter:&point byAngle:-offset];
+    }
+    indexPath = [self getCellIndexWithPoint:point];
+    return indexPath;
 }
-
-
 
 - (CGFloat)getNearestFixedPositionFrom:(CGFloat)currentPosition {
     CGFloat moveToAngle = currentPosition;
@@ -217,19 +228,6 @@
     NSArray *result = [self getSectorHitWithPoint:point borders:grid];
     res = [self getPathForArray:result];
     return res;
-}
-
-- (void)setDistance:(CGFloat *)distance andDirection:(CGPoint *)direction fromPoint:(CGPoint)from toPoint:(CGPoint)to {
-    CGFloat x = to.x - from.x;
-    CGFloat y = to.y - from.y;
-
-    CGFloat dist = (CGFloat) sqrt(x*x + y*y);
-
-    x /= dist;
-    y /= dist;
-
-    *direction = CGPointMake(x, y);
-    *distance = dist;
 }
 
 @end

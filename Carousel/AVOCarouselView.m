@@ -11,7 +11,6 @@
 #import "POPAnimatableProperty.h"
 #import "POPDecayAnimation.h"
 #import "POPSpringAnimation.h"
-#import "POPAnimator.h"
 
 typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     AVOSpinNone = 0,
@@ -170,13 +169,13 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     switch(recognizer.state) {
         case UIGestureRecognizerStateBegan: {
             CGPoint point = [recognizer locationInView:self];
-            NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
+            NSIndexPath *indexPath = [self.path findIndexPathForCellWithPoint:point withOffset:self.cellsOffset];
             [self.delegate carouselView:self longpressOnCellAtIndexPath:indexPath];
         } break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
             CGPoint point = [recognizer locationInView:self];
-            NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
+            NSIndexPath *indexPath = [self.path findIndexPathForCellWithPoint:point withOffset:self.cellsOffset];
             [self.delegate carouselView:self liftOnCellAtIndexPath:indexPath];
         } break;
 
@@ -191,12 +190,14 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
     //call delegate to tell him, that view were tapped
     CGPoint point = [recognizer locationInView:self];
-    NSIndexPath *indexPath = [self findIndexPathForCellWithPoint:point];
+    NSIndexPath *indexPath = [self.path findIndexPathForCellWithPoint:point withOffset:self.cellsOffset];
     [self.delegate carouselView:self
            tapOnCellAtIndexPath:indexPath];
 
     [self moveCellsToPlace];
 }
+
+#pragma mark - Helpers
 
 - (void)animateScrollToOffset:(CGFloat)offset {
     NSLog(@"%f", offset);
@@ -207,19 +208,6 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     [self pop_addAnimation:springAnimation forKey:@"bounce"];
 }
 
-//TODO: move to path(or somewhere else)
-- (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point {
-    NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
-    if (indexPath.item != 8) {
-        point = [self.path getCenterForIndexPath:indexPath];
-
-        [self.path moveCenter:&point byAngle:-self.cellsOffset];
-    }
-    indexPath = [self.path getCellIndexWithPoint:point];
-    return indexPath;
-}
-
-//TODO: move somewhere and refactor without offset
 //get angle velocity, given vector and point from that vector starts
 - (CGFloat)getAngleVelocityFromVectorVelocity:(CGPoint)velocity {
     CGFloat angleVelocity = (CGFloat) sqrtf(velocity.x*velocity.x + velocity.y*velocity.y) / self.path.rails.size.width/2;
@@ -232,8 +220,6 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     }
     return angleVelocity;
 }
-
-#pragma mark - Helpers
 
 -(void) moveCellsToPlace {
     CGFloat moveToAngle = [self.path getNearestFixedPositionFrom:self.cellsOffset];
@@ -248,25 +234,11 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 - (void)placeCells {
     NSUInteger index = 0;
     for (UIView *cell in _cells) {
-        CGRect frame = [self frameForCardAtIndex:index];
+        CGRect frame = [self.path frameForCardAtIndex:index withOffset:self.cellsOffset];
         [cell setFrame:frame];
         [self addSubview:cell];
         index ++;
     }
-}
-
-- (CGRect)frameForCardAtIndex:(NSUInteger) index {
-    CGRect frame = CGRectZero;
-
-    frame.size = [self.calc cellSize];
-    CGPoint center = [self.path getCenterForIndex:index];
-    if (index != 8) {
-        [self.path moveCenter:&center byAngle:self.cellsOffset];
-    }
-
-    frame.origin = CGPointMake(center.x - frame.size.width/2, center.y - frame.size.height/2);
-
-    return frame;
 }
 
 #pragma mark - Setters
