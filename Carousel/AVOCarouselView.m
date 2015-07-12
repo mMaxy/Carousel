@@ -345,7 +345,7 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 #pragma mark - <POPAnimationDelegate>
 
 - (void)pop_animationDidStop:(POPAnimation *)popAnimation finished:(BOOL)finished {
-    if ([popAnimation.name isEqualToString:kAVOCarouselViewDecayAnimationName]) {
+    if ([popAnimation.name isEqualToString:kAVOCarouselViewDecayAnimationName] && finished) {
         [self moveCellsToPlace];
     }
 }
