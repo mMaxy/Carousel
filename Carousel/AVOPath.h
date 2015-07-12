@@ -10,17 +10,21 @@
 
 @interface AVOPath : NSObject
 
+@property (assign, nonatomic, readonly) CGRect rails;
+@property (assign, nonatomic, readonly) CGFloat railsHeightToWidthRelation;
 @property (weak, nonatomic) AVOSizeCalculator *sizeCalculator;
+
+- (CGRect)frameForCardAtIndex:(NSUInteger)index withOffset:(CGFloat) offset;
+
+- (void)moveCenter:(CGPoint *)center byAngle:(double) angle;
 
 - (CGPoint)getCenterForIndex:(NSUInteger) index;
 - (CGPoint)getCenterForIndexPath:(NSIndexPath *) indexPath;
 
+- (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point withOffset:(CGFloat)offset;
+
+- (CGFloat)getNearestFixedPositionFrom:(CGFloat)currentPosition;
+
 - (NSIndexPath *)getCellIndexWithPoint:(CGPoint) point;
-
-- (NSIndexPath *)getNearestCellIndexFromPoint:(CGPoint) point
-                          withResultDirection:(CGPoint *) direction
-                            andResultDistance:(CGFloat *) distance;
-
-- (NSArray *)getIndexesInRect:(CGRect) rect;
 
 @end

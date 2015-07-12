@@ -34,7 +34,6 @@ struct Grid
 @property (assign, nonatomic, readonly) CGFloat verticalInset;
 @property (assign, nonatomic, readonly) CGFloat horizontalInset;
 
-@property (assign, nonatomic, readonly) struct Grid borders;
 @property (assign, nonatomic, readonly) struct Grid cellFrames;
 
 -(instancetype) initWithRectToFit:(CGRect) rect;

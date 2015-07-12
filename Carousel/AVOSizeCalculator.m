@@ -68,26 +68,6 @@
     return res;
 }
 
-- (struct Grid)borders {
-    struct Grid res;
-
-    res.xLeftCellLeftBorder = 0.f;
-    res.xLeftCellRightBorder = res.xLeftCellLeftBorder + self.cellSize.width + self.horizontalInset + self.spaceBetweenCells / 2;
-    res.xCenterCellLeftBorder = res.xLeftCellRightBorder;
-    res.xCenterCellRightBorder = res.xCenterCellLeftBorder + self.cellSize.width + self.spaceBetweenCells;
-    res.xRightCellLeftBorder = res.xCenterCellRightBorder;
-    res.xRightCellRightBorder = res.xRightCellLeftBorder + self.cellSize.width + self.horizontalInset + self.spaceBetweenCells / 2;
-
-    res.yTopCellTopBorder = 0.f;
-    res.yTopCellBotBorder = res.yTopCellTopBorder + self.cellSize.height + self.verticalInset + self.spaceBetweenCells / 2;
-    res.yCenterCellTopBorder = res.yTopCellBotBorder;
-    res.yCenterCellBotBorder = res.yCenterCellTopBorder + self.cellSize.height + self.spaceBetweenCells;
-    res.yBotCellTopBorder = res.yCenterCellBotBorder;
-    res.yBotCellBotBorder = res.yBotCellTopBorder + self.cellSize.height + self.verticalInset + self.spaceBetweenCells / 2;
-
-    return res;
-}
-
 #pragma mark Private Methods
 
 - (void)actualSetCellSize:(CGSize)size andVerticalInset:(CGFloat)vi andHorizontalInset:(CGFloat)hi {
