@@ -11,6 +11,7 @@
 #import "POPAnimatableProperty.h"
 #import "POPDecayAnimation.h"
 #import "POPSpringAnimation.h"
+#import "POPAnimator.h"
 
 typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     AVOSpinNone = 0,
@@ -18,10 +19,11 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
     AVOSpinCounterClockwise
 };
 
-const float kAVOCarouselDecelerationValue = 0.999f;
-const float kAVOCarouselVelocityValue = 0.3f;
+const float kAVOCarouselDecelerationValue = 0.998f;
+const float kAVOCarouselVelocityValue = 0.2f;
+NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
-@interface AVOCarouselView () <UIGestureRecognizerDelegate>
+@interface AVOCarouselView () <UIGestureRecognizerDelegate, POPAnimationDelegate>
 
 //Direction of spin
 @property(assign, nonatomic, readwrite) AVOSpinDirection spinDirection;
@@ -129,8 +131,6 @@ const float kAVOCarouselVelocityValue = 0.3f;
 
 //handle Pan
 - (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer {
-
-
     switch (recognizer.state) {
         case UIGestureRecognizerStateBegan:
             [self stopAnimations];
@@ -177,6 +177,8 @@ const float kAVOCarouselVelocityValue = 0.3f;
             decayAnimation.property = [self boundsOriginProperty];
             decayAnimation.velocity = @(angleVelocity);
             decayAnimation.deceleration = kAVOCarouselDecelerationValue;
+            decayAnimation.name = kAVOCarouselViewDecayAnimationName;
+            decayAnimation.delegate = self;
             [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
 
             _spinDirection = AVOSpinNone;
@@ -407,6 +409,12 @@ const float kAVOCarouselVelocityValue = 0.3f;
                                                               }];
 
     return prop;
+}
+
+- (void)pop_animationDidStop:(POPAnimation *)anim finished:(BOOL)finished {
+    if ([anim.name isEqualToString:kAVOCarouselViewDecayAnimationName]) {
+        [self moveCellsToPlace];
+    }
 }
 
 @end
