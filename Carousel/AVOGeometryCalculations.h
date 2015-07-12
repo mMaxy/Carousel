@@ -6,6 +6,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, AVOSpinDirection) {
+    AVOSpinNone = 0,
+    AVOSpinClockwise,
+    AVOSpinCounterClockwise
+};
 
 @class AVOSizeCalculator;
 
@@ -14,7 +19,9 @@
 
 +(CGPoint)calculateRotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame;
 
-+(CGFloat)countAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
-+(CGPoint)countPointForAngle:(double)angle onFrame:(CGRect)frame;
++(CGFloat)calculateAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
++(CGPoint)calculatePointForAngle:(double)angle onFrame:(CGRect)frame;
+
++(AVOSpinDirection) calculateSpinDirectionForVector:(CGPoint)vector fromPoint:(CGPoint) point onFrame:(CGRect)frame;
 
 @end
