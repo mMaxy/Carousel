@@ -8,6 +8,11 @@
 
 @class AVOCarouselView;
 
+FOUNDATION_EXPORT const float kAVOCarouselDecelerationValue;
+FOUNDATION_EXPORT const float kAVOCarouselVelocityValue;
+FOUNDATION_EXPORT NSString *const kAVOCarouselViewDecayAnimationName;
+
+
 @protocol AVOCarouselViewDelegate
 
 @optional
