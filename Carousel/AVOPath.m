@@ -5,13 +5,15 @@
 
 #import "AVOPath.h"
 #import "AVOSizeCalculator.h"
-#import "AVORotator.h"
+#import "AVOGeometryCalculations.h"
 
 @interface AVOPath ()
 
 @property (strong, nonatomic, readonly) NSArray *possibleOutcomes;
 
-- (NSArray *)getSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders;
+- (NSArray *)findSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders;
+- (NSIndexPath *)calculatePathForArray:(NSArray *)result;
+- (NSIndexPath *)findPathForPoint:(CGPoint)point inGrid:(struct Grid)grid;
 
 @end
 
@@ -25,10 +27,10 @@
 
 - (void)setSizeCalculator:(AVOSizeCalculator *)sizeCalculator {
     _sizeCalculator = sizeCalculator;
-    CGFloat railYMin = [self getCenterForIndex:2].y;
-    CGFloat railYMax = [self getCenterForIndex:4].y;
-    CGFloat railXMin = [self getCenterForIndex:0].x;
-    CGFloat railXMax = [self getCenterForIndex:2].x;
+    CGFloat railYMin = [self calculateCenterForIndex:2].y;
+    CGFloat railYMax = [self calculateCenterForIndex:4].y;
+    CGFloat railXMin = [self calculateCenterForIndex:0].x;
+    CGFloat railXMax = [self calculateCenterForIndex:2].x;
     _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
     _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
 }
@@ -39,7 +41,7 @@
     CGRect frame = CGRectZero;
 
     frame.size = [self.sizeCalculator cellSize];
-    CGPoint center = [self getCenterForIndex:index];
+    CGPoint center = [self calculateCenterForIndex:index];
     if (index != 8) {
         [self moveCenter:&center byAngle:offset];
     }
@@ -59,7 +61,7 @@
     p.y = p.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
     p.y *= 1/self.railsHeightToWidthRelation;
 
-    CGPoint rotated = [AVORotator rotatedPointFromPoint:p byAngle:remain inFrame:f];
+    CGPoint rotated = [AVOGeometryCalculations calculateRotatedPointFromPoint:p byAngle:remain inFrame:f];
 
     rotated.y *=  self.railsHeightToWidthRelation;
     rotated.x = rotated.x + self.sizeCalculator.horizontalInset + self.sizeCalculator.cellSize.width/2;
@@ -68,7 +70,7 @@
     (*center) = CGPointMake(rotated.x , rotated.y);
 }
 
-- (CGPoint)getCenterForIndex:(NSUInteger) i {
+- (CGPoint)calculateCenterForIndex:(NSUInteger) i {
     CGPoint result;
 
     CGFloat leftColumn   = self.sizeCalculator.cellSize.width * 1 / 2 + self.sizeCalculator.horizontalInset ;
@@ -103,36 +105,36 @@
     return result;
 }
 
-- (CGPoint)getCenterForIndexPath:(NSIndexPath *)indexPath {
+- (CGPoint)calculateCenterForIndexPath:(NSIndexPath *)indexPath {
     CGPoint result;
 
-    result = [self getCenterForIndex:(NSUInteger) indexPath.item];
+    result = [self calculateCenterForIndex:(NSUInteger) indexPath.item];
 
     return result;
 }
 
 
-- (NSIndexPath *)getCellIndexWithPoint:(CGPoint)point {
+- (NSIndexPath *)findCellIndexWithPoint:(CGPoint)point {
     NSIndexPath *res = nil;
 
     struct Grid frames = self.sizeCalculator.cellFrames;
-    res = [self getPathForPoint:point inGrid:frames];
+    res = [self findPathForPoint:point inGrid:frames];
 
     return res;
 }
 
 - (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point withOffset:(CGFloat) offset {
-    NSIndexPath *indexPath = [self getCellIndexWithPoint:point];
+    NSIndexPath *indexPath = [self findCellIndexWithPoint:point];
     if (indexPath.item != 8) {
-        point = [self getCenterForIndexPath:indexPath];
+        point = [self calculateCenterForIndexPath:indexPath];
 
         [self moveCenter:&point byAngle:-offset];
     }
-    indexPath = [self getCellIndexWithPoint:point];
+    indexPath = [self findCellIndexWithPoint:point];
     return indexPath;
 }
 
-- (CGFloat)getNearestFixedPositionFrom:(CGFloat)currentPosition {
+- (CGFloat)findNearestFixedPositionFrom:(CGFloat)currentPosition {
     CGFloat moveToAngle = currentPosition;
     if (currentPosition < M_PI_4/2 && currentPosition > 0) {
         moveToAngle = 0;
@@ -182,7 +184,7 @@
     return _possibleOutcomes;
 }
 
-- (NSArray *)getSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders {
+- (NSArray *)findSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders {
     BOOL pointInLeftColumn = point.x >= borders.xLeftCellLeftBorder && point.x <= borders.xLeftCellRightBorder;
     BOOL pointInCenterColumn = point.x >= borders.xCenterCellLeftBorder && point.x <= borders.xCenterCellRightBorder;
     BOOL pointInRightColumn = point.x >= borders.xRightCellLeftBorder && point.x <= borders.xRightCellRightBorder;
@@ -211,7 +213,7 @@
     return result;
 }
 
-- (NSIndexPath *)getPathForArray:(NSArray *)result {
+- (NSIndexPath *)calculatePathForArray:(NSArray *)result {
     NSIndexPath *res;
     for (NSUInteger i = 0; i < [[self possibleOutcomes] count]; i++) {
         for (NSUInteger y = 0; y < [[self possibleOutcomes][i] count]; y++) {
@@ -223,10 +225,10 @@
     return res;
 }
 
-- (NSIndexPath *)getPathForPoint:(CGPoint)point inGrid:(struct Grid)grid {
+- (NSIndexPath *)findPathForPoint:(CGPoint)point inGrid:(struct Grid)grid {
     NSIndexPath *res;
-    NSArray *result = [self getSectorHitWithPoint:point borders:grid];
-    res = [self getPathForArray:result];
+    NSArray *result = [self findSectorHitWithPoint:point borders:grid];
+    res = [self calculatePathForArray:result];
     return res;
 }
 

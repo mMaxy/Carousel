@@ -41,56 +41,56 @@
 #pragma mark Center For Index
 
 - (void)testPlaceForTopLeft {
-    CGPoint point = [self.path getCenterForIndex:0];
+    CGPoint point = [self.path calculateCenterForIndex:0];
 
     XCTAssertEqual(point.x, 65.f);
     XCTAssertEqual(point.y, 85.f);
 }
 
 - (void)testPlaceForTopCenter {
-    CGPoint point = [self.path getCenterForIndex:1];
+    CGPoint point = [self.path calculateCenterForIndex:1];
 
     XCTAssertEqual(point.x, 190.f);
     XCTAssertEqual(point.y, 85.f);
 }
 
 - (void)testPlaceForTopRight {
-    CGPoint point = [self.path getCenterForIndex:2];
+    CGPoint point = [self.path calculateCenterForIndex:2];
 
     XCTAssertEqual(point.x, 315.f);
     XCTAssertEqual(point.y, 85.f);
 }
 
 - (void)testPlaceForCenterLeft {
-    CGPoint point = [self.path getCenterForIndex:7];
+    CGPoint point = [self.path calculateCenterForIndex:7];
 
     XCTAssertEqual(point.x, 65.f);
     XCTAssertEqual(point.y, 250.f);
 }
 
 - (void)testPlaceForCenterCenter {
-    CGPoint point = [self.path getCenterForIndex:8];
+    CGPoint point = [self.path calculateCenterForIndex:8];
 
     XCTAssertEqual(point.x, 190.f);
     XCTAssertEqual(point.y, 250.f);
 }
 
 - (void)testPlaceForCenterRight {
-    CGPoint point = [self.path getCenterForIndex:3];
+    CGPoint point = [self.path calculateCenterForIndex:3];
 
     XCTAssertEqual(point.x, 315.f);
     XCTAssertEqual(point.y, 250.f);
 }
 
 - (void)testPlaceForBotLeft {
-    CGPoint point = [self.path getCenterForIndex:6];
+    CGPoint point = [self.path calculateCenterForIndex:6];
 
     XCTAssertEqual(point.x, 65.f);
     XCTAssertEqual(point.y, 415.f);
 }
 
 - (void)testPlaceForBotCenter {
-    CGPoint point = [self.path getCenterForIndex:5];
+    CGPoint point = [self.path calculateCenterForIndex:5];
 
     XCTAssertEqual(point.x, 190.f);
     XCTAssertEqual(point.y, 415.f);
@@ -98,7 +98,7 @@
 
 - (void)testPlaceForBotRight {
 
-    CGPoint point = [self.path getCenterForIndex:4];
+    CGPoint point = [self.path calculateCenterForIndex:4];
 
     XCTAssertEqual(point.x, 315.f);
     XCTAssertEqual(point.y, 415.f);
@@ -115,12 +115,12 @@
 
     for (NSIndexPath *ip in indexes) {
         //given
-        CGPoint center = [self.path getCenterForIndex:(NSUInteger) ip.item];
+        CGPoint center = [self.path calculateCenterForIndex:(NSUInteger) ip.item];
         CGSize size = self.calc.cellSize;
         CGPoint pointTopLeft  = CGPointMake(center.x - size.width / 2, center.y - size.height / 2);
 
         //when
-        NSIndexPath *resTopLeft = [self.path getCellIndexWithPoint:pointTopLeft];
+        NSIndexPath *resTopLeft = [self.path findCellIndexWithPoint:pointTopLeft];
 
         //then
         XCTAssertTrue([resTopLeft isEqual:ip]);
@@ -136,12 +136,12 @@
 
     for (NSIndexPath *ip in indexes) {
         //given
-        CGPoint center = [self.path getCenterForIndex:(NSUInteger) ip.item];
+        CGPoint center = [self.path calculateCenterForIndex:(NSUInteger) ip.item];
         CGSize size = self.calc.cellSize;
         CGPoint pointTopRight = CGPointMake(center.x + size.width / 2, center.y - size.height / 2);
 
         //when
-        NSIndexPath *resTopRight = [self.path getCellIndexWithPoint:pointTopRight];
+        NSIndexPath *resTopRight = [self.path findCellIndexWithPoint:pointTopRight];
 
         //then
         XCTAssertTrue([resTopRight isEqual:ip]);
@@ -157,12 +157,12 @@
 
     for (NSIndexPath *ip in indexes) {
         //given
-        CGPoint center = [self.path getCenterForIndex:(NSUInteger) ip.item];
+        CGPoint center = [self.path calculateCenterForIndex:(NSUInteger) ip.item];
         CGSize size = self.calc.cellSize;
         CGPoint pointBotLeft  = CGPointMake(center.x - size.width / 2, center.y + size.height / 2);
 
         //when
-        NSIndexPath *resBotLeft = [self.path getCellIndexWithPoint:pointBotLeft];
+        NSIndexPath *resBotLeft = [self.path findCellIndexWithPoint:pointBotLeft];
 
         //then
         XCTAssertTrue([resBotLeft isEqual:ip]);
@@ -178,12 +178,12 @@
 
     for (NSIndexPath *ip in indexes) {
         //given
-        CGPoint center = [self.path getCenterForIndex:(NSUInteger) ip.item];
+        CGPoint center = [self.path calculateCenterForIndex:(NSUInteger) ip.item];
         CGSize size = self.calc.cellSize;
         CGPoint pointBotRight = CGPointMake(center.x + size.width / 2, center.y + size.height / 2);
 
         //when
-        NSIndexPath *resBotRight = [self.path getCellIndexWithPoint:pointBotRight];
+        NSIndexPath *resBotRight = [self.path findCellIndexWithPoint:pointBotRight];
 
         //then
         XCTAssertTrue([resBotRight isEqual:ip]);
@@ -199,10 +199,10 @@
 
     for (NSIndexPath *ip in indexes) {
         //given
-        CGPoint center = [self.path getCenterForIndex:(NSUInteger) ip.item];
+        CGPoint center = [self.path calculateCenterForIndex:(NSUInteger) ip.item];
 
         //when
-        NSIndexPath *resCenter = [self.path getCellIndexWithPoint:center];
+        NSIndexPath *resCenter = [self.path findCellIndexWithPoint:center];
 
         //then
         XCTAssertTrue([resCenter isEqual:ip]);
@@ -218,7 +218,7 @@
 
     for (NSIndexPath *ip in indexes) {
         //given
-        CGPoint center = [self.path getCenterForIndex:(NSUInteger) ip.item];
+        CGPoint center = [self.path calculateCenterForIndex:(NSUInteger) ip.item];
         CGSize size = self.calc.cellSize;
         CGPoint pointTopLeft  = CGPointMake(center.x - size.width / 2 - 1.f, center.y - size.height / 2 - 1.f);
         CGPoint pointTopRight = CGPointMake(center.x + size.width / 2 + 1.f, center.y - size.height / 2 - 1.f);
@@ -226,10 +226,10 @@
         CGPoint pointBotRight = CGPointMake(center.x + size.width / 2 + 1.f, center.y + size.height / 2 + 1.f);
 
         //when
-        NSIndexPath *resTopLeft  = [self.path getCellIndexWithPoint:pointTopLeft];
-        NSIndexPath *resTopRight = [self.path getCellIndexWithPoint:pointTopRight];
-        NSIndexPath *resBotLeft  = [self.path getCellIndexWithPoint:pointBotLeft];
-        NSIndexPath *resBotRight = [self.path getCellIndexWithPoint:pointBotRight];
+        NSIndexPath *resTopLeft  = [self.path findCellIndexWithPoint:pointTopLeft];
+        NSIndexPath *resTopRight = [self.path findCellIndexWithPoint:pointTopRight];
+        NSIndexPath *resBotLeft  = [self.path findCellIndexWithPoint:pointBotLeft];
+        NSIndexPath *resBotRight = [self.path findCellIndexWithPoint:pointBotRight];
 
         //then
         XCTAssertTrue(resTopLeft  == nil);

@@ -10,11 +10,11 @@
 #import <XCTest/XCTest.h>
 #import "AVOSizeCalculator.h"
 #import "AVOPath.h"
-#import "AVORotator.h"
+#import "AVOGeometryCalculations.h"
 
 @interface AVORotatorTests : XCTestCase
 
-@property (strong, nonatomic) AVORotator *rotator;
+@property (strong, nonatomic) AVOGeometryCalculations *rotator;
 @property (assign, nonatomic) CGRect frame;
 
 @end
@@ -46,7 +46,7 @@
     CGPoint res;
 
     //when
-    res = [AVORotator rotatedPointFromPoint:point byAngle:0*angleBetweenCellsTop inFrame:self.frame];
+    res = [AVOGeometryCalculations calculateRotatedPointFromPoint:point byAngle:0 * angleBetweenCellsTop inFrame:self.frame];
 
     //then
     XCTAssertTrue([self isPointEqualsOrAlmoust:res withPoint:CGPointMake(0.f, 0.f)]);
@@ -59,7 +59,7 @@
     CGPoint res;
 
     //when
-    res = [AVORotator rotatedPointFromPoint:point byAngle:-2 * angleBetweenCellsTop inFrame:self.frame];
+    res = [AVOGeometryCalculations calculateRotatedPointFromPoint:point byAngle:-2 * angleBetweenCellsTop inFrame:self.frame];
 
     //then
     XCTAssertTrue([self isPointEqualsOrAlmoust:res withPoint:CGPointMake(self.frame.size.width, 0.f)]);
@@ -72,7 +72,7 @@
     CGPoint res;
 
     //when
-    res = [AVORotator rotatedPointFromPoint:point byAngle:-angleBetweenCellsTop inFrame:self.frame];
+    res = [AVOGeometryCalculations calculateRotatedPointFromPoint:point byAngle:-angleBetweenCellsTop inFrame:self.frame];
 
     //then
     XCTAssertTrue([self isPointEqualsOrAlmoust:res withPoint:CGPointMake(self.frame.size.width/2, 0.f)]);
@@ -86,7 +86,7 @@
     CGPoint res;
 
     //when
-    res = [AVORotator rotatedPointFromPoint:point byAngle:2 * angleBetweenCellsBot inFrame:self.frame];
+    res = [AVOGeometryCalculations calculateRotatedPointFromPoint:point byAngle:2 * angleBetweenCellsBot inFrame:self.frame];
 
     //then
     XCTAssertTrue([self isPointEqualsOrAlmoust:res withPoint:CGPointMake(0.f, self.frame.size.height)]);
@@ -100,7 +100,7 @@
     CGPoint res;
 
     //when
-    res = [AVORotator rotatedPointFromPoint:point byAngle:angleBetweenCellsBot inFrame:self.frame];
+    res = [AVOGeometryCalculations calculateRotatedPointFromPoint:point byAngle:angleBetweenCellsBot inFrame:self.frame];
 
     //then
     XCTAssertTrue([self isPointEqualsOrAlmoust:res withPoint:CGPointMake(0.f, self.frame.size.height/2)]);
@@ -114,7 +114,7 @@
     CGPoint res;
 
     //when
-    res = [AVORotator rotatedPointFromPoint:point byAngle:2*angleBetweenCellsBot+angleBetweenCellsTop inFrame:self.frame];
+    res = [AVOGeometryCalculations calculateRotatedPointFromPoint:point byAngle:2 * angleBetweenCellsBot + angleBetweenCellsTop inFrame:self.frame];
 
     //then
     XCTAssertTrue([self isPointEqualsOrAlmoust:res withPoint:CGPointMake(self.frame.size.width / 2, self.frame.size.height)]);
@@ -128,7 +128,7 @@
     CGPoint res;
 
     //when
-    res = [AVORotator rotatedPointFromPoint:point byAngle:2*angleBetweenCellsBot+2*angleBetweenCellsTop inFrame:self.frame];
+    res = [AVOGeometryCalculations calculateRotatedPointFromPoint:point byAngle:2 * angleBetweenCellsBot + 2 * angleBetweenCellsTop inFrame:self.frame];
 
     //then
     XCTAssertTrue([self isPointEqualsOrAlmoust:res withPoint:CGPointMake(self.frame.size.width, self.frame.size.height)]);

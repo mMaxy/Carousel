@@ -3,16 +3,16 @@
 // Copyright (c) 2015 aolkov. All rights reserved.
 //
 
-#import "AVORotator.h"
+#import "AVOGeometryCalculations.h"
 #import "AVOSizeCalculator.h"
 
 #define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
 
-@interface AVORotator()
+@interface AVOGeometryCalculations ()
 
 
 +(BOOL) increaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
-+(BOOL) increaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame;
++(BOOL) increaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame;
 +(BOOL) decreaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
 +(BOOL) decreaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame;
 
@@ -21,14 +21,14 @@
 
 @end
 
-@implementation AVORotator {
+@implementation AVOGeometryCalculations {
 
 }
 
-+ (CGPoint)rotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame {
++ (CGPoint)calculateRotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame {
     CGPoint result;
 
-    double startAngle = [self getAngleFromPoint:from onFrame:frame];
+    double startAngle = [self calculateAngleFromPoint:from onFrame:frame];
 
     startAngle += angle;
     while (startAngle < 0.f) {
@@ -38,13 +38,13 @@
         startAngle -= 2 * M_PI;
     }
 
-    result = [self getPointForAngle:startAngle onFrame:frame];
+    result = [self calculatePointForAngle:startAngle onFrame:frame];
 
     return result;
 }
 
-+ (CGFloat)getAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame {
-    double res;
++ (CGFloat)calculateAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame {
+    CGFloat res;
 
     CGPoint p = point;
     CGRect f = frame;
@@ -58,8 +58,8 @@
     CGFloat x = p.x - f.size.width / 2;
     CGFloat y = f.size.height / 2 - p.y;
 
-    double tg = y/x;
-    res = atan(tg);
+    CGFloat tg = y/x;
+    res = atanf(tg);
 
     while (quarter != 0) {
         [self increaseQuarterOfAngle:&res inFrame:&f];
@@ -69,7 +69,7 @@
     return res;
 }
 
-+ (CGPoint)getPointForAngle:(double)angle onFrame:(CGRect)frame {
++ (CGPoint)calculatePointForAngle:(double)angle onFrame:(CGRect)frame {
     CGPoint res;
 
     double a = angle;
@@ -82,7 +82,7 @@
 
     double x;
     double y;
-    double corner = [self getAngleFromPoint:CGPointMake(f.size.width, 0.f) onFrame:f];
+    double corner = [self calculateAngleFromPoint:CGPointMake(f.size.width, 0.f) onFrame:f];
     if (a > corner) {
         y = f.size.height / 2;
         x = y / tan(a);
@@ -104,6 +104,51 @@
     return res;
 }
 
++ (AVOSpinDirection)calculateSpinDirectionForVector:(CGPoint)vector fromPoint:(CGPoint)point onFrame:(CGRect)frame {
+    AVOSpinDirection res = AVOSpinNone;
+
+    CGFloat angle = [self calculateAngleFromPoint:point onFrame:frame];
+
+    if (angle >= 0.f && angle < M_PI_4) {
+        if (vector.y < 0) {
+            res = AVOSpinCounterClockwise;
+        } else if (vector.y > 0) {
+            res = AVOSpinClockwise;
+        }
+    }
+    if (angle >= M_PI_4 && angle < 3* M_PI_4) {
+        if (vector.x < 0) {
+            res = AVOSpinCounterClockwise;
+        } else if (vector.x > 0) {
+            res = AVOSpinClockwise;
+        }
+    }
+    if (angle >= 3*M_PI_4 && angle < 5* M_PI_4) {
+        if (vector.y > 0) {
+            res = AVOSpinCounterClockwise;
+        } else if (vector.y < 0) {
+            res = AVOSpinClockwise;
+        }
+    }
+    if (angle >= 5*M_PI_4 && angle < 7* M_PI_4) {
+        if (vector.x > 0) {
+            res = AVOSpinCounterClockwise;
+        } else if (vector.x < 0) {
+            res = AVOSpinClockwise;
+        }
+    }
+    if (angle >= 7*M_PI_4 && angle < 8* M_PI_4) {
+        if (vector.y < 0) {
+            res = AVOSpinCounterClockwise;
+        } else if (vector.y > 0) {
+            res = AVOSpinClockwise;
+        }
+    }
+
+    return res;
+}
+
+
 #pragma mark Private Helpers
 
 + (BOOL)increaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame {
@@ -117,7 +162,7 @@
     return YES;
 }
 
-+ (BOOL)increaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame {
++ (BOOL)increaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame {
     if ([self defineQuarterOfAngle:(*angle) inFrame:(*frame)] == 3) {
         return NO;
     }

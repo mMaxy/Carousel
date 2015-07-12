@@ -6,26 +6,17 @@
 #import "AVOCarouselView.h"
 #import "AVOPath.h"
 #import "AVOSizeCalculator.h"
-#import "AVORotator.h"
+#import "AVOGeometryCalculations.h"
 #import "POPAnimation.h"
 #import "POPAnimatableProperty.h"
 #import "POPDecayAnimation.h"
 #import "POPSpringAnimation.h"
-
-typedef NS_ENUM(NSInteger, AVOSpinDirection) {
-    AVOSpinNone = 0,
-    AVOSpinClockwise,
-    AVOSpinCounterClockwise
-};
 
 const float kAVOCarouselDecelerationValue = 0.998f;
 const float kAVOCarouselVelocityValue = 0.2f;
 NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
 @interface AVOCarouselView () <UIGestureRecognizerDelegate, POPAnimationDelegate>
-
-//Direction of spin
-@property(assign, nonatomic, readwrite) AVOSpinDirection spinDirection;
 
 //helpers
 @property (strong, nonatomic, readonly) AVOPath *path;
@@ -43,7 +34,18 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
 
 - (void)calculateDefaults;
+- (void)setupTouches;
+- (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer;
+- (void)handleLongPressGesture:(UILongPressGestureRecognizer *)recognizer;
+- (void)handleTapGesture:(UITapGestureRecognizer *)recognizer;
+- (void)animateDacayWithVelocity:(CGPoint)velocity fromPoint:(CGPoint)point;
+- (void)animateScrollToOffset:(CGFloat)offset;
+- (double)countDeltaAngleToPoint:(CGPoint)translation fromPoint:(CGPoint)point;
+- (CGFloat)countAngleVelocityFromVectorVelocity:(CGPoint)velocity withPoint:(CGPoint)point;
+- (void)moveCellsToPlace;
 - (void)stopAnimations;
+- (void)placeCells;
+- (POPAnimatableProperty *)cellsOffsetProperty;
 
 @end
 
@@ -81,7 +83,6 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     CGFloat offsetMax = (CGFloat) (M_PI * 2);
 
     _maxCellsOffset = offsetMax;
-
     _cellsOffset = 0.f;
 
     [self setupTouches];
@@ -113,30 +114,12 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
         case UIGestureRecognizerStateChanged: {
             CGPoint translation = [recognizer translationInView:self];
             CGPoint point = [recognizer locationInView:self];
-            CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
-            double startAngle = [AVORotator getAngleFromPoint:centerBefore onFrame:self.frame];
-            CGFloat endAngle = [AVORotator getAngleFromPoint:point onFrame:self.frame];
-            
-            if (startAngle-endAngle > M_PI) {
-                endAngle += 2 * M_PI;
-            }
-            if (endAngle-startAngle > M_PI) {
-                endAngle -= 2 * M_PI;
-            }
 
-            NSIndexPath *indexPath = [self.path getCellIndexWithPoint:point];
+            double deltaAngle = [self countDeltaAngleToPoint:translation fromPoint:point];
+
+            NSIndexPath *indexPath = [self.path findCellIndexWithPoint:point];
             if (indexPath == nil || indexPath.item == 8) {
                 return;
-            }
-
-            double deltaAngle = endAngle - startAngle;
-
-            if ( deltaAngle < 0) {
-                _spinDirection = AVOSpinCounterClockwise;
-            } else if (deltaAngle > 0){
-                _spinDirection = AVOSpinClockwise;
-            } else {
-                _spinDirection = AVOSpinNone;
             }
 
             self.cellsOffset = self.startOffset + (CGFloat) (deltaAngle);
@@ -145,18 +128,9 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
             CGPoint velocity = [recognizer velocityInView:self];
-            
-            CGFloat angleVelocity = [self getAngleVelocityFromVectorVelocity:velocity];
+            CGPoint point = [recognizer locationInView:self];
+            [self animateDacayWithVelocity:velocity fromPoint:point];
 
-            POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
-            decayAnimation.property = [self cellsOffsetProperty];
-            decayAnimation.velocity = @(angleVelocity);
-            decayAnimation.deceleration = kAVOCarouselDecelerationValue;
-            decayAnimation.name = kAVOCarouselViewDecayAnimationName;
-            decayAnimation.delegate = self;
-            [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
-
-            _spinDirection = AVOSpinNone;
         } break;
         default: {
             // Do nothing...
@@ -199,8 +173,19 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
 #pragma mark - Helpers
 
+- (void)animateDacayWithVelocity:(CGPoint)velocity fromPoint:(CGPoint)point {
+    CGFloat angleVelocity = [self countAngleVelocityFromVectorVelocity:velocity withPoint:point];
+
+    POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
+    decayAnimation.property = [self cellsOffsetProperty];
+    decayAnimation.velocity = @(angleVelocity);
+    decayAnimation.deceleration = kAVOCarouselDecelerationValue;
+    decayAnimation.name = kAVOCarouselViewDecayAnimationName;
+    decayAnimation.delegate = self;
+    [self pop_addAnimation:decayAnimation forKey:@"decelerate"];
+}
+
 - (void)animateScrollToOffset:(CGFloat)offset {
-    NSLog(@"%f", offset);
     POPSpringAnimation *springAnimation = [POPSpringAnimation animation];
     springAnimation.property = [self cellsOffsetProperty];
     springAnimation.velocity = @(kAVOCarouselVelocityValue);
@@ -208,21 +193,36 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     [self pop_addAnimation:springAnimation forKey:@"bounce"];
 }
 
+- (double)countDeltaAngleToPoint:(CGPoint)translation fromPoint:(CGPoint)point {
+    CGPoint centerBefore = CGPointMake(point.x - translation.x, point.y - translation.y);
+    double startAngle = [AVOGeometryCalculations calculateAngleFromPoint:centerBefore onFrame:self.frame];
+    CGFloat endAngle = [AVOGeometryCalculations calculateAngleFromPoint:point onFrame:self.frame];
+
+    if (startAngle-endAngle > M_PI) {
+        endAngle += 2 * M_PI;
+    }
+    if (endAngle-startAngle > M_PI) {
+        endAngle -= 2 * M_PI;
+    }
+
+    double deltaAngle = endAngle - startAngle;
+    return deltaAngle;
+}
+
 //get angle velocity, given vector and point from that vector starts
-- (CGFloat)getAngleVelocityFromVectorVelocity:(CGPoint)velocity {
+- (CGFloat)countAngleVelocityFromVectorVelocity:(CGPoint)velocity withPoint:(CGPoint)point {
     CGFloat angleVelocity = (CGFloat) sqrtf(velocity.x*velocity.x + velocity.y*velocity.y) / self.path.rails.size.width/2;
 
-    if (angleVelocity > 0 && _spinDirection == AVOSpinCounterClockwise) {
+    AVOSpinDirection direction = [AVOGeometryCalculations calculateSpinDirectionForVector:velocity fromPoint:point onFrame:self.frame];
+    if (direction == AVOSpinClockwise) {
         angleVelocity *= -1;
     }
-    if (angleVelocity < 0 && _spinDirection == AVOSpinClockwise){
-        angleVelocity *= -1;
-    }
+
     return angleVelocity;
 }
 
 -(void) moveCellsToPlace {
-    CGFloat moveToAngle = [self.path getNearestFixedPositionFrom:self.cellsOffset];
+    CGFloat moveToAngle = [self.path findNearestFixedPositionFrom:self.cellsOffset];
     [self animateScrollToOffset:moveToAngle];
 }
 

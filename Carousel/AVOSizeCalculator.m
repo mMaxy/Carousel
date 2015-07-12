@@ -8,6 +8,9 @@
 
 @interface AVOSizeCalculator ()
 
+- (void)actualSetCellSize:(CGSize)size andVerticalInset:(CGFloat)vi andHorizontalInset:(CGFloat)hi;
+- (void)countCellSizeAndInsets;
+
 @end
 
 @implementation AVOSizeCalculator
