@@ -9,10 +9,12 @@
 
 @interface AVOPath ()
 
-@property (strong, nonatomic, readonly) NSArray *possibleOutcomes;
+@property(strong, nonatomic, readonly) NSArray *possibleOutcomes;
 
 - (NSArray *)findSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders;
+
 - (NSUInteger)calculateIndexForArray:(NSArray *)result;
+
 - (NSUInteger)findIndexForPoint:(CGPoint)point inGrid:(struct Grid)grid;
 
 @end
@@ -31,13 +33,13 @@
     CGFloat railYMax = [self calculateCenterForIndex:4].y;
     CGFloat railXMin = [self calculateCenterForIndex:0].x;
     CGFloat railXMax = [self calculateCenterForIndex:2].x;
-    _rails = CGRectMake(railXMin, railXMin, railXMax-railXMin, railXMax-railXMin);
-    _railsHeightToWidthRelation = (railYMax-railYMin) / (railXMax-railXMin);
+    _rails = CGRectMake(railXMin, railXMin, railXMax - railXMin, railXMax - railXMin);
+    _railsHeightToWidthRelation = (railYMax - railYMin) / (railXMax - railXMin);
 }
 
 #pragma mark - Interface realization
 
-- (CGRect)frameForCardAtIndex:(NSUInteger)index withOffset:(CGFloat) offset {
+- (CGRect)frameForCardAtIndex:(NSUInteger)index withOffset:(CGFloat)offset {
     CGRect frame = CGRectZero;
 
     frame.size = [self.sizeCalculator cellSize];
@@ -46,45 +48,45 @@
         [self moveCenter:&center byAngle:offset];
     }
 
-    frame.origin = CGPointMake(center.x - frame.size.width/2, center.y - frame.size.height/2);
+    frame.origin = CGPointMake(center.x - frame.size.width / 2, center.y - frame.size.height / 2);
 
     return frame;
 }
 
-- (void)moveCenter:(CGPoint *)center byAngle:(double) angle {
+- (void)moveCenter:(CGPoint *)center byAngle:(double)angle {
     CGPoint p = (*center);
     double remain = angle;
 
     CGRect f = self.rails;
 
-    p.x = p.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width/2;
-    p.y = p.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height/2;
-    p.y *= 1/self.railsHeightToWidthRelation;
+    p.x = p.x - self.sizeCalculator.horizontalInset - self.sizeCalculator.cellSize.width / 2;
+    p.y = p.y - self.sizeCalculator.verticalInset - self.sizeCalculator.cellSize.height / 2;
+    p.y *= 1 / self.railsHeightToWidthRelation;
 
     CGPoint rotated = [AVOGeometryCalculations calculateRotatedPointFromPoint:p byAngle:remain inFrame:f];
 
-    rotated.y *=  self.railsHeightToWidthRelation;
-    rotated.x = rotated.x + self.sizeCalculator.horizontalInset + self.sizeCalculator.cellSize.width/2;
-    rotated.y = rotated.y + self.sizeCalculator.verticalInset + self.sizeCalculator.cellSize.height/2;
+    rotated.y *= self.railsHeightToWidthRelation;
+    rotated.x = rotated.x + self.sizeCalculator.horizontalInset + self.sizeCalculator.cellSize.width / 2;
+    rotated.y = rotated.y + self.sizeCalculator.verticalInset + self.sizeCalculator.cellSize.height / 2;
 
-    (*center) = CGPointMake(rotated.x , rotated.y);
+    (*center) = CGPointMake(rotated.x, rotated.y);
 }
 
-- (CGPoint)calculateCenterForIndex:(NSUInteger) i {
+- (CGPoint)calculateCenterForIndex:(NSUInteger)i {
     CGPoint result;
 
-    CGFloat leftColumn   = self.sizeCalculator.cellSize.width * 1 / 2 + self.sizeCalculator.horizontalInset ;
+    CGFloat leftColumn = self.sizeCalculator.cellSize.width * 1 / 2 + self.sizeCalculator.horizontalInset;
     CGFloat centerColumn = self.sizeCalculator.cellSize.width * 3 / 2 + self.sizeCalculator.horizontalInset + self.sizeCalculator.spaceBetweenCells;
-    CGFloat rightColumn  = self.sizeCalculator.cellSize.width * 5 / 2 + self.sizeCalculator.horizontalInset + self.sizeCalculator.spaceBetweenCells * 2;
+    CGFloat rightColumn = self.sizeCalculator.cellSize.width * 5 / 2 + self.sizeCalculator.horizontalInset + self.sizeCalculator.spaceBetweenCells * 2;
 
-    CGFloat topRow    = self.sizeCalculator.cellSize.height * 1 / 2 + self.sizeCalculator.verticalInset ;
+    CGFloat topRow = self.sizeCalculator.cellSize.height * 1 / 2 + self.sizeCalculator.verticalInset;
     CGFloat centerRow = self.sizeCalculator.cellSize.height * 3 / 2 + self.sizeCalculator.verticalInset + self.sizeCalculator.spaceBetweenCells;
-    CGFloat botRow    = self.sizeCalculator.cellSize.height * 5 / 2 + self.sizeCalculator.verticalInset + self.sizeCalculator.spaceBetweenCells * 2;
+    CGFloat botRow = self.sizeCalculator.cellSize.height * 5 / 2 + self.sizeCalculator.verticalInset + self.sizeCalculator.spaceBetweenCells * 2;
 
     CGFloat x = 0.f;
     CGFloat y = 0.f;
 
-    if ([@[@(0), @(6), @(7)] containsObject:@(i)]){
+    if ([@[@(0), @(6), @(7)] containsObject:@(i)]) {
         x = leftColumn;
     } else if ([@[@(1), @(5), @(8)] containsObject:@(i)]) {
         x = centerColumn;
@@ -115,7 +117,7 @@
 
 
 - (NSUInteger)findCellIndexWithPoint:(CGPoint)point {
-    NSUInteger res = nil;
+    NSUInteger res = 0;
 
     struct Grid frames = self.sizeCalculator.cellFrames;
     res = [self findIndexForPoint:point inGrid:frames];
@@ -123,7 +125,7 @@
     return res;
 }
 
-- (NSUInteger)findIndexForCellWithPoint:(CGPoint)point withOffset:(CGFloat) offset {
+- (NSUInteger)findIndexForCellWithPoint:(CGPoint)point withOffset:(CGFloat)offset {
     NSUInteger index = [self findCellIndexWithPoint:point];
     if (index != 8) {
         point = [self calculateCenterForIndexPath:index];
@@ -136,24 +138,24 @@
 
 - (CGFloat)findNearestFixedPositionFrom:(CGFloat)currentPosition {
     CGFloat moveToAngle = currentPosition;
-    if (currentPosition < M_PI_4/2 && currentPosition > 0) {
+    if (currentPosition < M_PI_4 / 2 && currentPosition > 0) {
         moveToAngle = 0;
-    } else if (currentPosition < 3 * M_PI_4/2 && currentPosition > M_PI_4/2) {
+    } else if (currentPosition < 3 * M_PI_4 / 2 && currentPosition > M_PI_4 / 2) {
         moveToAngle = (CGFloat) M_PI_4;
-    } else if (currentPosition < 5 * M_PI_4/2 && currentPosition > 3 * M_PI_4/2) {
+    } else if (currentPosition < 5 * M_PI_4 / 2 && currentPosition > 3 * M_PI_4 / 2) {
         moveToAngle = (CGFloat) M_PI_2;
-    } else if (currentPosition < 7 * M_PI_4/2 && currentPosition > 5 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (3*M_PI_4);
-    } else if (currentPosition < 9 * M_PI_4/2 && currentPosition > 7 * M_PI_4/2) {
+    } else if (currentPosition < 7 * M_PI_4 / 2 && currentPosition > 5 * M_PI_4 / 2) {
+        moveToAngle = (CGFloat) (3 * M_PI_4);
+    } else if (currentPosition < 9 * M_PI_4 / 2 && currentPosition > 7 * M_PI_4 / 2) {
         moveToAngle = (CGFloat) M_PI;
-    } else if (currentPosition < 11 * M_PI_4/2 && currentPosition > 9 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (5*M_PI_4);
-    } else if (currentPosition < 13 * M_PI_4/2 && currentPosition > 11 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (3*M_PI_2);
-    } else if (currentPosition < 15 * M_PI_4/2 && currentPosition > 13 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (7*M_PI_4);
-    } else if (currentPosition < 16 * M_PI_4/2 && currentPosition > 15 * M_PI_4/2) {
-        moveToAngle = (CGFloat) (2*M_PI);
+    } else if (currentPosition < 11 * M_PI_4 / 2 && currentPosition > 9 * M_PI_4 / 2) {
+        moveToAngle = (CGFloat) (5 * M_PI_4);
+    } else if (currentPosition < 13 * M_PI_4 / 2 && currentPosition > 11 * M_PI_4 / 2) {
+        moveToAngle = (CGFloat) (3 * M_PI_2);
+    } else if (currentPosition < 15 * M_PI_4 / 2 && currentPosition > 13 * M_PI_4 / 2) {
+        moveToAngle = (CGFloat) (7 * M_PI_4);
+    } else if (currentPosition < 16 * M_PI_4 / 2 && currentPosition > 15 * M_PI_4 / 2) {
+        moveToAngle = (CGFloat) (2 * M_PI);
     }
     return moveToAngle;
 }
@@ -226,7 +228,7 @@
 }
 
 - (NSUInteger)findIndexForPoint:(CGPoint)point inGrid:(struct Grid)grid {
-    NSUInteger res= 0;
+    NSUInteger res = 0;
     NSArray *result = [self findSectorHitWithPoint:point borders:grid];
     res = [self calculateIndexForArray:result];
     return res;

@@ -4,20 +4,23 @@
 //
 
 #import "AVOGeometryCalculations.h"
-#import "AVOSizeCalculator.h"
 
 #define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
 
 @interface AVOGeometryCalculations ()
 
 
-+(BOOL) increaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
-+(BOOL) increaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame;
-+(BOOL) decreaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
-+(BOOL) decreaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame;
++ (BOOL)increaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
 
-+(NSUInteger) defineQuarterForPoint:(CGPoint) point inFrame:(CGRect)frame;
-+(NSUInteger) defineQuarterOfAngle:(double) angle inFrame:(CGRect)frame;
++ (BOOL)increaseQuarterOfAngle:(CGFloat *)angle inFrame:(CGRect *)frame;
+
++ (BOOL)decreaseQuarterOfPoint:(CGPoint *)point inFrame:(CGRect *)frame;
+
++ (BOOL)decreaseQuarterOfAngle:(double *)angle inFrame:(CGRect *)frame;
+
++ (NSUInteger)defineQuarterForPoint:(CGPoint)point inFrame:(CGRect)frame;
+
++ (NSUInteger)defineQuarterOfAngle:(double)angle inFrame:(CGRect)frame;
 
 @end
 
@@ -52,18 +55,18 @@
     NSUInteger quarter = 0;
 
     while ([self decreaseQuarterOfPoint:&p inFrame:&f]) {
-        quarter ++;
+        quarter++;
     }
 
     CGFloat x = p.x - f.size.width / 2;
     CGFloat y = f.size.height / 2 - p.y;
 
-    CGFloat tg = y/x;
+    CGFloat tg = y / x;
     res = atanf(tg);
 
     while (quarter != 0) {
         [self increaseQuarterOfAngle:&res inFrame:&f];
-        quarter --;
+        quarter--;
     }
 
     return res;
@@ -77,7 +80,7 @@
     NSUInteger quarter = 0;
 
     while ([self decreaseQuarterOfAngle:&a inFrame:&f]) {
-        quarter ++;
+        quarter++;
     }
 
     double x;
@@ -88,7 +91,7 @@
         x = y / tan(a);
     } else if (a < corner) {
         x = f.size.width / 2;
-        y =  x * tan(a);
+        y = x * tan(a);
     } else {
         x = f.size.width / 2;
         y = f.size.height / 2;
@@ -98,7 +101,7 @@
 
     while (quarter != 0) {
         [self increaseQuarterOfPoint:&res inFrame:&f];
-        quarter --;
+        quarter--;
     }
 
     return res;
@@ -116,28 +119,28 @@
             res = AVOSpinClockwise;
         }
     }
-    if (angle >= M_PI_4 && angle < 3* M_PI_4) {
+    if (angle >= M_PI_4 && angle < 3 * M_PI_4) {
         if (vector.x < 0) {
             res = AVOSpinCounterClockwise;
         } else if (vector.x > 0) {
             res = AVOSpinClockwise;
         }
     }
-    if (angle >= 3*M_PI_4 && angle < 5* M_PI_4) {
+    if (angle >= 3 * M_PI_4 && angle < 5 * M_PI_4) {
         if (vector.y > 0) {
             res = AVOSpinCounterClockwise;
         } else if (vector.y < 0) {
             res = AVOSpinClockwise;
         }
     }
-    if (angle >= 5*M_PI_4 && angle < 7* M_PI_4) {
+    if (angle >= 5 * M_PI_4 && angle < 7 * M_PI_4) {
         if (vector.x > 0) {
             res = AVOSpinCounterClockwise;
         } else if (vector.x < 0) {
             res = AVOSpinClockwise;
         }
     }
-    if (angle >= 7*M_PI_4 && angle < 8* M_PI_4) {
+    if (angle >= 7 * M_PI_4 && angle < 8 * M_PI_4) {
         if (vector.y < 0) {
             res = AVOSpinCounterClockwise;
         } else if (vector.y > 0) {
@@ -192,7 +195,7 @@
 }
 
 + (NSUInteger)defineQuarterForPoint:(CGPoint)point inFrame:(CGRect)frame {
-    CGPoint center = CGPointMake(frame.size.width/2, frame.size.height/2);
+    CGPoint center = CGPointMake(frame.size.width / 2, frame.size.height / 2);
     if (point.x > center.x) {
         if (point.y <= center.y) {
             return 0;
@@ -215,7 +218,7 @@
         return 1;
     } else if (angle >= M_PI && angle < M_PI + M_PI_2) {
         return 2;
-    } else  if (angle >= M_PI + M_PI_2 && angle < 2 * M_PI) {
+    } else if (angle >= M_PI + M_PI_2 && angle < 2 * M_PI) {
         return 3;
     } else {
         return NAN;

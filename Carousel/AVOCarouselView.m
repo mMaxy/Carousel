@@ -19,32 +19,44 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 @interface AVOCarouselView () <UIGestureRecognizerDelegate, POPAnimationDelegate>
 
 //helpers
-@property (strong, nonatomic, readonly) AVOPath *path;
-@property (strong, nonatomic, readonly) AVOSizeCalculator *calc;
+@property(strong, nonatomic, readonly) AVOPath *path;
+@property(strong, nonatomic, readonly) AVOSizeCalculator *calc;
 
 //Cells offsets, define angle by which inner views are moved
-@property (assign, nonatomic, readwrite) CGFloat cellsOffset;
-@property (assign, nonatomic, readonly) CGFloat maxCellsOffset;
-@property (assign, nonatomic, readwrite) CGFloat startOffset;
+@property(assign, nonatomic, readwrite) CGFloat cellsOffset;
+@property(assign, nonatomic, readonly) CGFloat maxCellsOffset;
+@property(assign, nonatomic, readwrite) CGFloat startOffset;
 
 //gesture recognizers
-@property (strong, nonatomic, readonly) UITapGestureRecognizer *tapGestureRecognizer;
-@property (strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
-@property (strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
+@property(strong, nonatomic, readonly) UITapGestureRecognizer *tapGestureRecognizer;
+@property(strong, nonatomic, readonly) UILongPressGestureRecognizer *longPressGestureRecognizer;
+@property(strong, nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 
 
 - (void)calculateDefaults;
+
 - (void)setupTouches;
+
 - (void)handlePanGesture:(UIPanGestureRecognizer *)recognizer;
+
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)recognizer;
+
 - (void)handleTapGesture:(UITapGestureRecognizer *)recognizer;
+
 - (void)animateDacayWithVelocity:(CGPoint)velocity fromPoint:(CGPoint)point;
+
 - (void)animateScrollToOffset:(CGFloat)offset;
+
 - (double)countDeltaAngleToPoint:(CGPoint)translation fromPoint:(CGPoint)point;
+
 - (CGFloat)countAngleVelocityFromVectorVelocity:(CGPoint)velocity withPoint:(CGPoint)point;
+
 - (void)moveCellsToPlace;
+
 - (void)stopAnimations;
+
 - (void)placeCells;
+
 - (POPAnimatableProperty *)cellsOffsetProperty;
 
 @end
@@ -65,7 +77,7 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super initWithCoder:aDecoder]) {
-         [self calculateDefaults];
+        [self calculateDefaults];
     }
     return self;
 }
@@ -124,36 +136,46 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
             self.cellsOffset = self.startOffset + (CGFloat) (deltaAngle);
 
-        } break;
+        }
+            break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
             CGPoint velocity = [recognizer velocityInView:self];
             CGPoint point = [recognizer locationInView:self];
             [self animateDacayWithVelocity:velocity fromPoint:point];
 
-        } break;
+        }
+            break;
         default: {
             // Do nothing...
-        } break;
+        }
+            break;
     }
 }
 
 //handle Long Tap
 - (void)handleLongPressGesture:(UILongPressGestureRecognizer *)recognizer {
-    switch(recognizer.state) {
+    switch (recognizer.state) {
         case UIGestureRecognizerStateBegan: {
             CGPoint point = [recognizer locationInView:self];
-            NSUInteger index = [self.path findIndexForCellWithPoint:point withOffset:self.cellsOffset];
-            [self.delegate carouselView:self longpressOnCellAtIndexPath:index];
-        } break;
+            NSUInteger index = [self.path findIndexForCellWithPoint:point
+                                                         withOffset:self.cellsOffset];
+            [self.delegate carouselView:self
+                 longpressOnCellAtIndex:index];
+        }
+            break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
             CGPoint point = [recognizer locationInView:self];
-            NSUInteger index = [self.path findIndexForCellWithPoint:point withOffset:self.cellsOffset];
-            [self.delegate carouselView:self liftOnCellAtIndexPath:index];
-        } break;
+            NSUInteger index = [self.path findIndexForCellWithPoint:point
+                                                         withOffset:self.cellsOffset];
+            [self.delegate carouselView:self
+                      liftOnCellAtIndex:index];
+        }
+            break;
 
-        default: break;
+        default:
+            break;
     }
 }
 
@@ -164,9 +186,10 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
     //call delegate to tell him, that view were tapped
     CGPoint point = [recognizer locationInView:self];
-    NSUInteger indexPath = [self.path findIndexForCellWithPoint:point withOffset:self.cellsOffset];
+    NSUInteger indexPath = [self.path findIndexForCellWithPoint:point
+                                                     withOffset:self.cellsOffset];
     [self.delegate carouselView:self
-           tapOnCellAtIndexPath:indexPath];
+               tapOnCellAtIndex:indexPath];
 
     [self moveCellsToPlace];
 }
@@ -174,7 +197,8 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 #pragma mark - Helpers
 
 - (void)animateDacayWithVelocity:(CGPoint)velocity fromPoint:(CGPoint)point {
-    CGFloat angleVelocity = [self countAngleVelocityFromVectorVelocity:velocity withPoint:point];
+    CGFloat angleVelocity = [self countAngleVelocityFromVectorVelocity:velocity
+                                                             withPoint:point];
 
     POPDecayAnimation *decayAnimation = [POPDecayAnimation animation];
     decayAnimation.property = [self cellsOffsetProperty];
@@ -198,10 +222,10 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     double startAngle = [AVOGeometryCalculations calculateAngleFromPoint:centerBefore onFrame:self.frame];
     CGFloat endAngle = [AVOGeometryCalculations calculateAngleFromPoint:point onFrame:self.frame];
 
-    if (startAngle-endAngle > M_PI) {
+    if (startAngle - endAngle > M_PI) {
         endAngle += 2 * M_PI;
     }
-    if (endAngle-startAngle > M_PI) {
+    if (endAngle - startAngle > M_PI) {
         endAngle -= 2 * M_PI;
     }
 
@@ -211,7 +235,7 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
 //get angle velocity, given vector and point from that vector starts
 - (CGFloat)countAngleVelocityFromVectorVelocity:(CGPoint)velocity withPoint:(CGPoint)point {
-    CGFloat angleVelocity = (CGFloat) sqrtf(velocity.x*velocity.x + velocity.y*velocity.y) / self.path.rails.size.width/2;
+    CGFloat angleVelocity = (CGFloat) sqrtf(velocity.x * velocity.x + velocity.y * velocity.y) / self.path.rails.size.width / 2;
 
     AVOSpinDirection direction = [AVOGeometryCalculations calculateSpinDirectionForVector:velocity fromPoint:point onFrame:self.frame];
     if (direction == AVOSpinClockwise) {
@@ -221,7 +245,7 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     return angleVelocity;
 }
 
--(void) moveCellsToPlace {
+- (void)moveCellsToPlace {
     CGFloat moveToAngle = [self.path findNearestFixedPositionFrom:self.cellsOffset];
     [self animateScrollToOffset:moveToAngle];
 }
@@ -237,7 +261,7 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
         CGRect frame = [self.path frameForCardAtIndex:index withOffset:self.cellsOffset];
         [cell setFrame:frame];
         [self addSubview:cell];
-        index ++;
+        index++;
     }
 }
 
@@ -260,7 +284,7 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     [self placeCells];
 }
 
--(void)setFrame:(CGRect)frame {
+- (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     [self calculateDefaults];
     [self placeCells];
