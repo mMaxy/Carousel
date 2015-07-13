@@ -50,6 +50,7 @@
     CGFloat res;
 
     CGPoint p = point;
+    p.y -= 0.0005;
     CGRect f = frame;
 
     NSUInteger quarter = 0;
