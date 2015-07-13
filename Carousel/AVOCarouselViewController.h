@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AVOCarouselViewController : UIViewController 
+@interface AVOCarouselViewController : UIViewController
 
 @end

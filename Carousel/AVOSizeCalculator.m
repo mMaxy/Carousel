@@ -9,6 +9,7 @@
 @interface AVOSizeCalculator ()
 
 - (void)actualSetCellSize:(CGSize)size andVerticalInset:(CGFloat)vi andHorizontalInset:(CGFloat)hi;
+
 - (void)countCellSizeAndInsets;
 
 @end
@@ -20,7 +21,7 @@
 
 #pragma mark Inits
 
-- (instancetype) init {
+- (instancetype)init {
     return [self initWithRectToFit:CGRectZero];
 }
 
@@ -76,10 +77,10 @@
 - (void)actualSetCellSize:(CGSize)size andVerticalInset:(CGFloat)vi andHorizontalInset:(CGFloat)hi {
     _cellSize = size;
     _verticalInset = vi;
-    _horizontalInset =  hi;
+    _horizontalInset = hi;
 
     CGFloat spaceBetweenCells = (_verticalInset > _horizontalInset) ? _horizontalInset : _verticalInset;
-    _frameSize = CGSizeMake(( _cellSize.width * 3.f + 4 * spaceBetweenCells), (_cellSize.height * 3.f + 4 * spaceBetweenCells));
+    _frameSize = CGSizeMake((_cellSize.width * 3.f + 4 * spaceBetweenCells), (_cellSize.height * 3.f + 4 * spaceBetweenCells));
 }
 
 - (void)countCellSizeAndInsets {

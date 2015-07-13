@@ -11,7 +11,7 @@
 
 @interface AVOCarouselViewController () <AVOCarouselViewDelegate>
 
-@property (weak, nonatomic) IBOutlet AVOCarouselView *carousel;
+@property(weak, nonatomic) IBOutlet AVOCarouselView *carousel;
 
 @end
 
@@ -24,7 +24,7 @@
 
 }
 
--(void)viewDidLayoutSubviews {
+- (void)viewDidLayoutSubviews {
     [self.carousel setFrame:self.view.bounds];
     NSMutableArray *cells = [NSMutableArray new];
     for (int index = 0; index < 9; index++) {
@@ -46,15 +46,15 @@
 
 #pragma mark - <AVOCollectionViewDelegateLayout>
 
-- (void)carouselView:(AVOCarouselView *)carouselView tapOnCellAtIndexPath:(NSUInteger)index {
+- (void)carouselView:(AVOCarouselView *)carouselView tapOnCellAtIndex:(NSUInteger)index {
     NSLog(@"Tap #%i", index + 1);
 }
 
-- (void)carouselView:(AVOCarouselView *)carouselView longpressOnCellAtIndexPath:(NSUInteger)index {
+- (void)carouselView:(AVOCarouselView *)carouselView longpressOnCellAtIndex:(NSUInteger)index {
     NSLog(@"Longpress start #%i", index + 1);
 }
 
-- (void)carouselView:(AVOCarouselView *)carouselView liftOnCellAtIndexPath:(NSUInteger)index {
+- (void)carouselView:(AVOCarouselView *)carouselView liftOnCellAtIndex:(NSUInteger)index {
     NSLog(@"End Longpress #%i", index + 1);
 }
 
