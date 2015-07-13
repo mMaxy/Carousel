@@ -117,8 +117,8 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
             double deltaAngle = [self countDeltaAngleToPoint:translation fromPoint:point];
 
-            NSIndexPath *indexPath = [self.path findCellIndexWithPoint:point];
-            if (indexPath == nil || indexPath.item == 8) {
+            NSUInteger indexPath = [self.path findCellIndexWithPoint:point];
+            if (indexPath == 8) {
                 return;
             }
 
@@ -143,14 +143,14 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
     switch(recognizer.state) {
         case UIGestureRecognizerStateBegan: {
             CGPoint point = [recognizer locationInView:self];
-            NSIndexPath *indexPath = [self.path findIndexPathForCellWithPoint:point withOffset:self.cellsOffset];
-            [self.delegate carouselView:self longpressOnCellAtIndexPath:indexPath];
+            NSUInteger index = [self.path findIndexForCellWithPoint:point withOffset:self.cellsOffset];
+            [self.delegate carouselView:self longpressOnCellAtIndexPath:index];
         } break;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded: {
             CGPoint point = [recognizer locationInView:self];
-            NSIndexPath *indexPath = [self.path findIndexPathForCellWithPoint:point withOffset:self.cellsOffset];
-            [self.delegate carouselView:self liftOnCellAtIndexPath:indexPath];
+            NSUInteger index = [self.path findIndexForCellWithPoint:point withOffset:self.cellsOffset];
+            [self.delegate carouselView:self liftOnCellAtIndexPath:index];
         } break;
 
         default: break;
@@ -164,7 +164,7 @@ NSString *const kAVOCarouselViewDecayAnimationName = @"AVOCarouselViewDecay";
 
     //call delegate to tell him, that view were tapped
     CGPoint point = [recognizer locationInView:self];
-    NSIndexPath *indexPath = [self.path findIndexPathForCellWithPoint:point withOffset:self.cellsOffset];
+    NSUInteger indexPath = [self.path findIndexForCellWithPoint:point withOffset:self.cellsOffset];
     [self.delegate carouselView:self
            tapOnCellAtIndexPath:indexPath];
 

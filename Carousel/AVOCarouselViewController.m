@@ -46,16 +46,16 @@
 
 #pragma mark - <AVOCollectionViewDelegateLayout>
 
-- (void)carouselView:(AVOCarouselView *)collectionView tapOnCellAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"Tap #%i", indexPath.item+1);
+- (void)carouselView:(AVOCarouselView *)carouselView tapOnCellAtIndexPath:(NSUInteger)index {
+    NSLog(@"Tap #%i", index + 1);
 }
 
-- (void)carouselView:(AVOCarouselView *)collectionView longpressOnCellAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"Longpress start #%i", indexPath.item + 1);
+- (void)carouselView:(AVOCarouselView *)carouselView longpressOnCellAtIndexPath:(NSUInteger)index {
+    NSLog(@"Longpress start #%i", index + 1);
 }
 
-- (void)carouselView:(AVOCarouselView *)collectionView liftOnCellAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"End Longpress #%i", indexPath.item + 1);
+- (void)carouselView:(AVOCarouselView *)carouselView liftOnCellAtIndexPath:(NSUInteger)index {
+    NSLog(@"End Longpress #%i", index + 1);
 }
 
 @end

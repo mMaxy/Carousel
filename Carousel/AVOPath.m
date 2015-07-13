@@ -12,8 +12,8 @@
 @property (strong, nonatomic, readonly) NSArray *possibleOutcomes;
 
 - (NSArray *)findSectorHitWithPoint:(CGPoint)point borders:(struct Grid)borders;
-- (NSIndexPath *)calculatePathForArray:(NSArray *)result;
-- (NSIndexPath *)findPathForPoint:(CGPoint)point inGrid:(struct Grid)grid;
+- (NSUInteger)calculateIndexForArray:(NSArray *)result;
+- (NSUInteger)findIndexForPoint:(CGPoint)point inGrid:(struct Grid)grid;
 
 @end
 
@@ -105,33 +105,33 @@
     return result;
 }
 
-- (CGPoint)calculateCenterForIndexPath:(NSIndexPath *)indexPath {
+- (CGPoint)calculateCenterForIndexPath:(NSUInteger)indexPath {
     CGPoint result;
 
-    result = [self calculateCenterForIndex:(NSUInteger) indexPath.item];
+    result = [self calculateCenterForIndex:indexPath];
 
     return result;
 }
 
 
-- (NSIndexPath *)findCellIndexWithPoint:(CGPoint)point {
-    NSIndexPath *res = nil;
+- (NSUInteger)findCellIndexWithPoint:(CGPoint)point {
+    NSUInteger res = nil;
 
     struct Grid frames = self.sizeCalculator.cellFrames;
-    res = [self findPathForPoint:point inGrid:frames];
+    res = [self findIndexForPoint:point inGrid:frames];
 
     return res;
 }
 
-- (NSIndexPath *)findIndexPathForCellWithPoint:(CGPoint)point withOffset:(CGFloat) offset {
-    NSIndexPath *indexPath = [self findCellIndexWithPoint:point];
-    if (indexPath.item != 8) {
-        point = [self calculateCenterForIndexPath:indexPath];
+- (NSUInteger)findIndexForCellWithPoint:(CGPoint)point withOffset:(CGFloat) offset {
+    NSUInteger index = [self findCellIndexWithPoint:point];
+    if (index != 8) {
+        point = [self calculateCenterForIndexPath:index];
 
         [self moveCenter:&point byAngle:-offset];
     }
-    indexPath = [self findCellIndexWithPoint:point];
-    return indexPath;
+    index = [self findCellIndexWithPoint:point];
+    return index;
 }
 
 - (CGFloat)findNearestFixedPositionFrom:(CGFloat)currentPosition {
@@ -164,19 +164,19 @@
     if (!_possibleOutcomes) {
         _possibleOutcomes = @[
                 @[
-                        [NSIndexPath indexPathForItem:0 inSection:0],
-                        [NSIndexPath indexPathForItem:1 inSection:0],
-                        [NSIndexPath indexPathForItem:2 inSection:0]
+                        @(0),
+                        @(1),
+                        @(2)
                 ],
                 @[
-                        [NSIndexPath indexPathForItem:7 inSection:0],
-                        [NSIndexPath indexPathForItem:8 inSection:0],
-                        [NSIndexPath indexPathForItem:3 inSection:0]
+                        @(7),
+                        @(8),
+                        @(3)
                 ],
                 @[
-                        [NSIndexPath indexPathForItem:6 inSection:0],
-                        [NSIndexPath indexPathForItem:5 inSection:0],
-                        [NSIndexPath indexPathForItem:4 inSection:0]
+                        @(6),
+                        @(5),
+                        @(4)
                 ]
         ];
     }
@@ -213,22 +213,22 @@
     return result;
 }
 
-- (NSIndexPath *)calculatePathForArray:(NSArray *)result {
-    NSIndexPath *res;
+- (NSUInteger)calculateIndexForArray:(NSArray *)result {
+    NSUInteger res = 0;
     for (NSUInteger i = 0; i < [[self possibleOutcomes] count]; i++) {
         for (NSUInteger y = 0; y < [[self possibleOutcomes][i] count]; y++) {
             if ([result[i][y] boolValue]) {
-                res = [self possibleOutcomes][i][y];
+                res = [[self possibleOutcomes][i][y] unsignedIntegerValue];
             }
         }
     }
     return res;
 }
 
-- (NSIndexPath *)findPathForPoint:(CGPoint)point inGrid:(struct Grid)grid {
-    NSIndexPath *res;
+- (NSUInteger)findIndexForPoint:(CGPoint)point inGrid:(struct Grid)grid {
+    NSUInteger res= 0;
     NSArray *result = [self findSectorHitWithPoint:point borders:grid];
-    res = [self calculatePathForArray:result];
+    res = [self calculateIndexForArray:result];
     return res;
 }
 

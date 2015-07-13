@@ -17,9 +17,9 @@ FOUNDATION_EXPORT NSString *const kAVOCarouselViewDecayAnimationName;
 
 @optional
 
-- (void)carouselView:(AVOCarouselView *)collectionView tapOnCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)carouselView:(AVOCarouselView *)collectionView longpressOnCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)carouselView:(AVOCarouselView *)collectionView liftOnCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)carouselView:(AVOCarouselView *)carouselView tapOnCellAtIndexPath:(NSUInteger)index;
+- (void)carouselView:(AVOCarouselView *)carouselView longpressOnCellAtIndexPath:(NSUInteger)index;
+- (void)carouselView:(AVOCarouselView *)carouselView liftOnCellAtIndexPath:(NSUInteger)index;
 
 @end
 
