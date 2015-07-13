@@ -17,19 +17,22 @@ FOUNDATION_EXPORT NSString *const kAVOCarouselViewDecayAnimationName;
 
 @optional
 
-- (void)carouselView:(AVOCarouselView *)carouselView tapOnCellAtIndexPath:(NSUInteger)index;
-- (void)carouselView:(AVOCarouselView *)carouselView longpressOnCellAtIndexPath:(NSUInteger)index;
-- (void)carouselView:(AVOCarouselView *)carouselView liftOnCellAtIndexPath:(NSUInteger)index;
+- (void)carouselView:(AVOCarouselView *)carouselView tapOnCellAtIndex:(NSUInteger)index;
+
+- (void)carouselView:(AVOCarouselView *)carouselView longpressOnCellAtIndex:(NSUInteger)index;
+
+- (void)carouselView:(AVOCarouselView *)carouselView liftOnCellAtIndex:(NSUInteger)index;
 
 @end
 
 @interface AVOCarouselView : UIView
 
-@property (strong, nonatomic) NSArray *cells;
-@property (assign, nonatomic) id<AVOCarouselViewDelegate> delegate;
+@property(strong, nonatomic) NSArray *cells;
+@property(assign, nonatomic) id <AVOCarouselViewDelegate> delegate;
 
--(instancetype) initWithFrame:(CGRect)frame;
--(instancetype) initWithCoder:(NSCoder *) aDecoder;
+- (instancetype)initWithFrame:(CGRect)frame;
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder;
 
 
 @end

@@ -17,11 +17,12 @@ typedef NS_ENUM(NSInteger, AVOSpinDirection) {
 
 @interface AVOGeometryCalculations : NSObject
 
-+(CGPoint)calculateRotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame;
++ (CGPoint)calculateRotatedPointFromPoint:(CGPoint)from byAngle:(double)angle inFrame:(CGRect)frame;
 
-+(CGFloat)calculateAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
-+(CGPoint)calculatePointForAngle:(double)angle onFrame:(CGRect)frame;
++ (CGFloat)calculateAngleFromPoint:(CGPoint)point onFrame:(CGRect)frame;
 
-+(AVOSpinDirection) calculateSpinDirectionForVector:(CGPoint)vector fromPoint:(CGPoint) point onFrame:(CGRect)frame;
++ (CGPoint)calculatePointForAngle:(double)angle onFrame:(CGRect)frame;
+
++ (AVOSpinDirection)calculateSpinDirectionForVector:(CGPoint)vector fromPoint:(CGPoint)point onFrame:(CGRect)frame;
 
 @end
